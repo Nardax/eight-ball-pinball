@@ -245,7 +245,7 @@ event_player:
     - ball_8_collected_ready
 
   # --- Rack complete: fires when all 8 collected ---
-  ball_8_collected_ready{player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.ball_5_collected and player.ball_6_collected and player.ball_7_collected}:
+  ball_8_collected_ready:
     - eight_ball_rack_complete
 
 # ---------------------------------------------------------------

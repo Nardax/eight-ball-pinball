@@ -6,35 +6,43 @@ Run with: python -m pytest machine/tests/test_eight_ball.py -v
 Or:        mpf test machine/tests/test_eight_ball.py
 """
 
+import os
+
 from mpf.tests.MpfTestCase import MpfTestCase
 
 
 class TestEightBall(MpfTestCase):
 
-    def getConfigFile(self):
+    def get_config_file(self):
         return "config.yaml"
 
-    def getMachinePath(self):
-        # Adjust relative path as needed when running from repo root
-        return "machine"
+    def get_machine_path(self):
+        # Absolute path to the machine folder (parent of the tests directory)
+        return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
     # ------------------------------------------------------------------
     # Helper: start a game with N players
     # ------------------------------------------------------------------
     def _start_game(self, players=1):
-        self.hit_switch_and_run("s_trough_1", 1)
-        self.machine.switch_controller.process_switch("s_coin", 1)
-        self.machine_run()
+        # Place ball in trough and let MPF inventory it
+        self.hit_switch_and_run("s_trough_1", 2)
+        # Insert coin (momentary pulse — hit then release)
+        self.hit_and_release_switch("s_coin")
+        self.advance_time_and_run(1)
+        # Press start button once per player
         for _ in range(players):
-            self.machine.switch_controller.process_switch("s_start_button", 1)
-            self.machine_run()
-        self.release_switch_and_run("s_plunger_lane", 1)
-        self.machine_run()
+            self.hit_and_release_switch("s_start_button")
+            self.advance_time_and_run(1)
+        # Allow time for ball to eject from trough, load into plunger,
+        # launch to playfield, and for ball_started events to settle
+        self.advance_time_and_run(10)
 
     def _drain_ball(self):
-        self.machine.switch_controller.process_switch("s_outhole", 1)
-        self.machine_run()
-        self.machine_run()
+        # Simulate ball entering outhole (hit) then being kicked back (release)
+        self.hit_switch_and_run("s_outhole", 1)
+        self.release_switch_and_run("s_outhole", 1)
+        # Allow time for bonus mode to run and ball_ended events to settle
+        self.advance_time_and_run(10)
 
     # ------------------------------------------------------------------
     # 5.1.1 — Ball tracking: collecting ball 1 lights l_ball_1
@@ -88,6 +96,7 @@ class TestEightBall(MpfTestCase):
         )
         self.hit_switch_and_run("s_eight_ball_target", 1)
         self.assertTrue(self.machine.game.player["ball_8_collected"])
+        self.assertEventCalled("eight_ball_rack_complete")
         # Rack complete: base_bonus_locked should be 24000
         self.assertEqual(self.machine.game.player["base_bonus_locked"], 24000)
         self.assertEqual(self.machine.game.player["rack_count"], 1)
@@ -123,6 +132,7 @@ class TestEightBall(MpfTestCase):
         self.assertTrue(self.machine.game.player["kickback_active"])
         # Ball enters outlane while kickback is lit
         self.hit_switch_and_run("s_left_outlane", 1)
+        self.assertEventCalled("kickback_fired")
         self.assertFalse(self.machine.game.player["kickback_active"])
         self.assertFalse(self.machine.game.player["spinner_lit"])
 
@@ -141,14 +151,20 @@ class TestEightBall(MpfTestCase):
     # ------------------------------------------------------------------
     def test_star_rollover_multiplier_progression(self):
         self._start_game()
+        score_before_hit1 = self.machine.game.player.score
         # Hits 1-2: candy cane levels
         self.hit_switch_and_run("s_star_rollover", 0.1)
         self.assertEqual(self.machine.game.player["star_hits"], 1)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 1)
+        # +500 from bonus_mult + 100 from base = 600
+        self.assertEqual(self.machine.game.player.score, score_before_hit1 + 600)
 
+        score_before_hit2 = self.machine.game.player.score
         self.hit_switch_and_run("s_star_rollover", 0.1)
         self.assertEqual(self.machine.game.player["star_hits"], 2)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 1)
+        # +1000 from bonus_mult + 100 from base = 1100
+        self.assertEqual(self.machine.game.player.score, score_before_hit2 + 1100)
 
         # Hit 3 → 2X
         self.hit_switch_and_run("s_star_rollover", 0.1)
@@ -193,7 +209,32 @@ class TestEightBall(MpfTestCase):
         self.assertAlmostEqual(
             self.machine.game.player.score,
             score_before_drain + expected_bonus,
-            delta=100  # small tolerance for any rounding
+            delta=0
+        )
+
+        # --- Second scenario: base_bonus_locked > 0 ---
+        # Ball 2: complete a full rack to lock in 24,000 base bonus
+        for sw in ["s_lane_1", "s_lane_2", "s_lane_3", "s_lane_4",
+                   "s_target_5", "s_target_6", "s_return_lane_7"]:
+            self.hit_switch_and_run(sw, 0.1)
+        self.hit_switch_and_run("s_eight_ball_target", 2.5)
+        # After rack: base_bonus_locked = 24000, balls_collected reset to 0
+        self.assertEqual(self.machine.game.player["base_bonus_locked"], 24000)
+        # Collect 2 more balls in new rack
+        self.hit_switch_and_run("s_lane_1", 0.1)
+        self.hit_switch_and_run("s_lane_2", 0.1)
+        self.assertEqual(self.machine.game.player["balls_collected"], 2)
+        # Multiplier defaults to 1 (no star rollovers done this ball)
+        self.assertEqual(self.machine.game.player["bonus_multiplier"], 1)
+        score_before_drain2 = self.machine.game.player.score
+        self._drain_ball()
+        self.machine_run()
+        # Bonus = (2 × 3000 × 1) + 24000 = 30000
+        expected_bonus2 = (2 * 3000 * 1) + 24000
+        self.assertAlmostEqual(
+            self.machine.game.player.score,
+            score_before_drain2 + expected_bonus2,
+            delta=0
         )
 
     # ------------------------------------------------------------------
@@ -237,7 +278,7 @@ class TestEightBall(MpfTestCase):
         score_before = self.machine.game.player.score
         self.hit_switch_and_run("s_lane_4", 0.1)
         self.assertEventCalled("skill_shot_awarded")
-        self.assertGreater(self.machine.game.player.score, score_before)
+        self.assertEqual(self.machine.game.player.score, score_before + 5000)
 
     # ------------------------------------------------------------------
     # 5.1.16 — Skill shot missed on pop bumper hit
@@ -298,3 +339,115 @@ class TestEightBall(MpfTestCase):
         # After 4 drains (one per player), ball 2 starts with player 1
         self.assertEqual(self.machine.game.ball, 2)
         self.assertEqual(self.machine.game.player.number, 1)
+
+    # ------------------------------------------------------------------
+    # 5.2.1 — Star rollover hit 1 scores 500 from bonus_mult + 100 from base
+    # ------------------------------------------------------------------
+    def test_star_rollover_hit_1_scores_500(self):
+        self._start_game()
+        score_before = self.machine.game.player.score
+        self.hit_switch_and_run("s_star_rollover", 0.1)
+        # bonus_mult: +500; base: +100 → total +600
+        self.assertEqual(self.machine.game.player.score, score_before + 600)
+        self.assertEqual(self.machine.game.player["star_hits"], 1)
+        self.assertEqual(self.machine.game.player["bonus_multiplier"], 1)
+
+    # ------------------------------------------------------------------
+    # 5.2.2 — Star rollover hit 2 scores 1000 from bonus_mult + 100 from base
+    # ------------------------------------------------------------------
+    def test_star_rollover_hit_2_scores_1000(self):
+        self._start_game()
+        score_before = self.machine.game.player.score
+        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.hit_switch_and_run("s_star_rollover", 0.1)
+        # Hit 1: +600; hit 2: +1100 → cumulative +1700
+        self.assertEqual(self.machine.game.player.score, score_before + 1700)
+        self.assertEqual(self.machine.game.player["star_hits"], 2)
+        self.assertEqual(self.machine.game.player["bonus_multiplier"], 1)
+
+    # ------------------------------------------------------------------
+    # 5.2.3 — Star rollover hit 7+ scores 5000 from bonus_mult + 100 base
+    # ------------------------------------------------------------------
+    def test_star_rollover_hit_7_plus_scores_5000(self):
+        self._start_game()
+        # Hits 1-6
+        for _ in range(6):
+            self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.assertEventCalled("extra_ball_awarded")
+        self.assertEqual(self.machine.game.player["star_hits"], 6)
+        # Hit 7: bonus_mult scores 5000 (star_hits>=7), base scores 100 → total +5100
+        score_before_hit7 = self.machine.game.player.score
+        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.assertEqual(self.machine.game.player["star_hits"], 7)
+        self.assertEqual(self.machine.game.player.score, score_before_hit7 + 5100)
+
+    # ------------------------------------------------------------------
+    # 5.2.4 — Kickback coil fires (kickback_fired event) on save
+    # ------------------------------------------------------------------
+    def test_kickback_coil_fires_on_save(self):
+        self._start_game()
+        # Light kickback and spinner via 8-ball pad
+        self.hit_switch_and_run("s_eight_ball_target", 0.1)
+        self.assertTrue(self.machine.game.player["kickback_active"])
+        self.assertTrue(self.machine.game.player["spinner_lit"])
+        # Ball enters outlane while kickback is active → kickback_fired
+        self.hit_switch_and_run("s_left_outlane", 1)
+        self.assertEventCalled("kickback_fired")
+        # Kickback and spinner should now be off
+        self.assertFalse(self.machine.game.player["kickback_active"])
+        self.assertFalse(self.machine.game.player["spinner_lit"])
+
+    # ------------------------------------------------------------------
+    # 5.2.5 — Multi-rack bonus: base_bonus_locked accumulates across racks
+    # ------------------------------------------------------------------
+    def test_multi_rack_bonus_accumulation(self):
+        self._start_game()
+        # Ball 1: complete rack 1 → base_bonus_locked = 24000
+        for sw in ["s_lane_1", "s_lane_2", "s_lane_3", "s_lane_4",
+                   "s_target_5", "s_target_6", "s_return_lane_7"]:
+            self.hit_switch_and_run(sw, 0.1)
+        self.hit_switch_and_run("s_eight_ball_target", 2.5)
+        self.assertEqual(self.machine.game.player["base_bonus_locked"], 24000)
+        self.assertEqual(self.machine.game.player["balls_collected"], 0)
+        # Drain ball 1: bonus = (0 × 3000 × 1) + 24000 = 24000
+        score_before_drain1 = self.machine.game.player.score
+        self._drain_ball()
+        self.machine_run()
+        self.assertAlmostEqual(
+            self.machine.game.player.score,
+            score_before_drain1 + 24000,
+            delta=0
+        )
+        # base_bonus_locked persists on ball 2
+        self.assertEqual(self.machine.game.player["base_bonus_locked"], 24000)
+
+        # Ball 2: complete rack 2 → base_bonus_locked = 48000
+        for sw in ["s_lane_1", "s_lane_2", "s_lane_3", "s_lane_4",
+                   "s_target_5", "s_target_6", "s_return_lane_7"]:
+            self.hit_switch_and_run(sw, 0.1)
+        self.hit_switch_and_run("s_eight_ball_target", 2.5)
+        self.assertEqual(self.machine.game.player["base_bonus_locked"], 48000)
+        self.assertEqual(self.machine.game.player["balls_collected"], 0)
+        # Drain ball 2: bonus = (0 × 3000 × 1) + 48000 = 48000
+        score_before_drain2 = self.machine.game.player.score
+        self._drain_ball()
+        self.machine_run()
+        self.assertAlmostEqual(
+            self.machine.game.player.score,
+            score_before_drain2 + 48000,
+            delta=0
+        )
+
+    # ------------------------------------------------------------------
+    # 5.2.6 — Lit advance lane toggles between 2 and 3 on lane hit
+    # ------------------------------------------------------------------
+    def test_lit_advance_lane_toggles(self):
+        self._start_game()
+        # Initial value from config.yaml is 2
+        self.assertEqual(self.machine.game.player["lit_advance_lane"], 2)
+        # Hit lane 1 → lit_advance_lane toggles to 3
+        self.hit_switch_and_run("s_lane_1", 0.1)
+        self.assertEqual(self.machine.game.player["lit_advance_lane"], 3)
+        # Hit lane 1 again → toggles back to 2
+        self.hit_switch_and_run("s_lane_1", 0.1)
+        self.assertEqual(self.machine.game.player["lit_advance_lane"], 2)

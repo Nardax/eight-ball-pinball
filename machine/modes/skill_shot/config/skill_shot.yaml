@@ -53,23 +53,23 @@ event_player:
     - skill_shot_missed
 
   # Skill shot: ball 1 → lane 4
-  s_lane_4_active{current_player.ball==1}:
+  s_lane_4_active{player.ball==1}:
     - skill_shot_awarded
 
   # Subsequent balls: any uncollected lane counts (lane 1-4 checks)
-  s_lane_1_active{current_player.ball>1 and not player.ball_1_collected}:
+  s_lane_1_active{player.ball>1 and not player.ball_1_collected}:
     - skill_shot_awarded
-  s_lane_2_active{current_player.ball>1 and not player.ball_2_collected}:
+  s_lane_2_active{player.ball>1 and not player.ball_2_collected}:
     - skill_shot_awarded
-  s_lane_3_active{current_player.ball>1 and not player.ball_3_collected}:
+  s_lane_3_active{player.ball>1 and not player.ball_3_collected}:
     - skill_shot_awarded
-  s_lane_4_active{current_player.ball>1 and not player.ball_4_collected}:
+  s_lane_4_active{player.ball>1 and not player.ball_4_collected}:
     - skill_shot_awarded
 
   # If all 4 lanes done — lit advance lane
-  s_lane_2_active{current_player.ball>1 and player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.lit_advance_lane==2}:
+  s_lane_2_active{player.ball>1 and player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.lit_advance_lane==2}:
     - skill_shot_awarded
-  s_lane_3_active{current_player.ball>1 and player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.lit_advance_lane==3}:
+  s_lane_3_active{player.ball>1 and player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.lit_advance_lane==3}:
     - skill_shot_awarded
 
 variable_player:
