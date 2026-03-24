@@ -22,10 +22,13 @@ All game logic is built and tested in MPF's **virtual platform** before any hard
 
 ### Requirements
 
-- Python 3.9+ (Python 3.10+ required for MPF 0.80)
-- MPF 0.57.4 (installed in `.venv`)
+- **Python 3.8–3.12** — required for MPF 0.57.4 (`Requires-Python: >=3.8,<3.13`)
+- **MPF 0.57.4** — installed in `.venv`
 
-> **Note:** The plan targets MPF 0.80 which requires Python 3.10+. The current environment has Python 3.9.13. Install Python 3.10+ and run `pip install mpf --pre` to upgrade. All YAML configs are compatible.
+> **Note on MPF versions:** The original plan targeted MPF 0.80, which requires Python 3.10+
+> and uses the Godot GMC media controller. This repo uses MPF 0.57.4 (supports Python 3.8–3.12,
+> uses Kivy MC). All game YAML configs are compatible with both versions. See
+> [`docs/adr.md`](docs/adr.md) (ADR-002) for the full rationale.
 
 ### Setup
 
@@ -35,9 +38,11 @@ python -m venv .venv
 .\.venv\Scripts\activate      # Windows
 source .venv/bin/activate     # Mac/Linux
 
-# Install MPF
-pip install mpf==0.57.4       # Python 3.9
-pip install mpf --pre         # Python 3.10+ (for MPF 0.80)
+# Install MPF 0.57.4 (Python 3.8–3.12)
+pip install mpf==0.57.4
+
+# To use MPF 0.80 instead (requires Python 3.10+):
+# pip install mpf --pre
 ```
 
 ### Running MPF in Virtual Mode
@@ -101,7 +106,7 @@ machine/
 │   └── bonus_collect.yaml
 ├── sounds/               # Audio assets (placeholder — add WAV files)
 ├── tests/
-│   └── test_eight_ball.py    # 19 automated MPF unit tests
+│   └── test_eight_ball.py    # 25 automated MPF unit tests
 └── keyboard.yaml         # Keyboard-to-switch mappings
 ```
 
