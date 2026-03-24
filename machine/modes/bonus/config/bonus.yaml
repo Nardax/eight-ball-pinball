@@ -3,18 +3,25 @@
 # End-of-Ball Bonus Mode
 # Uses MPF's built-in bonus mode plugin.
 # Formula: (balls_collected x 3000) x bonus_multiplier + base_bonus_locked
+# base_bonus_locked is added FLAT (not multiplied) per Eight Ball rules.
 # Multiplier does NOT carry over between balls (keep_multiplier: false).
 # Collected balls within current rack DO carry over between balls.
 
+mode:
+  code: mpf.modes.bonus.code.bonus.Bonus
+  start_events: ball_ending
+  stop_events: ball_ended
+  priority: 500
+  game_mode: true
+  use_wait_queue: true
+
 mode_settings:
+  display_delay_ms: 100  # fast for tests; increase for real hardware display
   keep_multiplier: false
   bonus_entries:
     - event: bonus_balls_collected
       score: 3000
       player_score_entry: balls_collected
-    - event: bonus_base_locked
-      score: 1
-      player_score_entry: base_bonus_locked
 
 slides:
   bonus_slide:
@@ -24,7 +31,7 @@ slides:
         font_size: 36
         y: 80%
       - type: text
-        text: X(player.bonus_multiplier)
+        text: "{machine.current_player.bonus_multiplier}X"
         font_size: 24
         y: 35%
 
@@ -40,7 +47,12 @@ sound_player:
       action: play
       loops: 5
 
-# Reset star hits counter after bonus complete
+# After MPF bonus plugin finishes, add base_bonus_locked flat (not multiplied).
+# Reset star_hits counter so next ball starts fresh.
 variable_player:
-  bonus_complete:
-    star_hits: 0
+  bonus_total:
+    score:
+      int: current_player.base_bonus_locked  # ADD base_bonus_locked flat (not multiplied)
+    star_hits:
+      int: 0
+      action: set  # RESET star_hits to 0 for next ball

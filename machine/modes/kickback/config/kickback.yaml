@@ -1,7 +1,7 @@
 #config_version=6
 
 # Kickback Mode
-# Manages kickback and spinner lit states per player.
+# Manages kickback and spinner lit states per current_player.
 # 8-ball pad target lights both kickback and spinner.
 # Kickback fires when ball enters left outlane while lit,
 # then turns off kickback + spinner. Must re-hit 8-ball pad.
@@ -18,7 +18,7 @@ event_player:
     - kickback_and_spinner_lit
 
   # Fire the kickback coil when ball enters outlane with kickback lit
-  s_left_outlane_active{player.kickback_active}:
+  s_left_outlane_active{current_player.kickback_active}:
     - kickback_fired
 
   # Kickback lane switch (ball physically passes through after save)
@@ -27,12 +27,20 @@ event_player:
 
 variable_player:
   kickback_and_spinner_lit:
-    kickback_active: true
-    spinner_lit: true
+    kickback_active:
+      int: 1
+      action: set
+    spinner_lit:
+      int: 1
+      action: set
 
   kickback_fired:
-    kickback_active: false
-    spinner_lit: false
+    kickback_active:
+      int: 0
+      action: set
+    spinner_lit:
+      int: 0
+      action: set
 
 coil_player:
   kickback_fired:

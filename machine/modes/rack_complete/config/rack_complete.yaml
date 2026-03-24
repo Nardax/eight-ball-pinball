@@ -27,21 +27,36 @@ slide_player:
 
 variable_player:
   mode_rack_complete_started:
-    # Lock in 24,000 base bonus; accumulates per rack
+    # Lock in 24,000 base bonus; accumulates per rack (ADD 24000)
     base_bonus_locked:
-      int: player.base_bonus_locked + 24000
+      int: 24000
     rack_count:
-      int: player.rack_count + 1
-    # Reset individual ball tracking for next rack
-    ball_1_collected: false
-    ball_2_collected: false
-    ball_3_collected: false
-    ball_4_collected: false
-    ball_5_collected: false
-    ball_6_collected: false
-    ball_7_collected: false
-    ball_8_collected: false
-    balls_collected: 0
+      int: 1
+    # Reset individual ball tracking for next rack (SET to 0)
+    ball_1_collected:
+      int: 0
+      action: set
+    ball_2_collected:
+      int: 0
+      action: set
+    ball_3_collected:
+      int: 0
+      action: set
+    ball_4_collected:
+      int: 0
+      action: set
+    ball_5_collected:
+      int: 0
+      action: set
+    ball_6_collected:
+      int: 0
+      action: set
+    ball_7_collected:
+      int: 0
+      action: set
+    balls_collected:
+      int: 0
+      action: set
 
 show_player:
   mode_rack_complete_started: rack_complete_show

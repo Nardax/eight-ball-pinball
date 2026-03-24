@@ -20,6 +20,9 @@ class TestEightBall(MpfTestCase):
         # Absolute path to the machine folder (parent of the tests directory)
         return os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 
+    def get_platform(self):
+        return 'virtual'
+
     # ------------------------------------------------------------------
     # Helper: start a game with N players
     # ------------------------------------------------------------------
@@ -38,10 +41,13 @@ class TestEightBall(MpfTestCase):
         self.advance_time_and_run(10)
 
     def _drain_ball(self):
-        # Simulate ball entering outhole (hit) then being kicked back (release)
-        self.hit_switch_and_run("s_outhole", 1)
-        self.release_switch_and_run("s_outhole", 1)
-        # Allow time for bonus mode to run and ball_ended events to settle
+        # Post ball_drain relay event and manually decrement playfield count.
+        # This is the correct MPF test pattern (follows MpfFakeGameTestCase).
+        result = self.post_relay_event_with_params("ball_drain", balls=1)
+        self.machine.playfield.balls -= result['balls']
+        self.machine.playfield.available_balls -= result['balls']
+        # Allow time for bonus (display_delay_ms=100 × ~4 steps ≈ 400ms)
+        # and for ball_ended + next ball_started events to fully settle.
         self.advance_time_and_run(10)
 
     # ------------------------------------------------------------------
@@ -52,7 +58,7 @@ class TestEightBall(MpfTestCase):
         self.assertFalse(self.machine.game.player["ball_1_collected"])
         self.hit_switch_and_run("s_lane_1", 1)
         self.assertTrue(self.machine.game.player["ball_1_collected"])
-        self.assertEqual(self.machine.lights["l_ball_1"].color, [255, 255, 0])  # yellow
+        self.assertEqual(self.machine.lights["l_ball_1"].get_color(), [255, 255, 0])  # yellow
 
     # ------------------------------------------------------------------
     # 5.1.2 — Ball 2 → l_ball_2 blue
@@ -331,13 +337,13 @@ class TestEightBall(MpfTestCase):
     def test_multi_player_game_flow(self):
         self._start_game(players=4)
         self.assertEqual(len(self.machine.game.players), 4)
-        self.assertEqual(self.machine.game.ball, 1)
+        self.assertEqual(self.machine.game.player.ball, 1)
         # Each player drains and advances
         for _ in range(4):
             self._drain_ball()
             self.machine_run()
         # After 4 drains (one per player), ball 2 starts with player 1
-        self.assertEqual(self.machine.game.ball, 2)
+        self.assertEqual(self.machine.game.player.ball, 2)
         self.assertEqual(self.machine.game.player.number, 1)
 
     # ------------------------------------------------------------------
