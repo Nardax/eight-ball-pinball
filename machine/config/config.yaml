@@ -139,5 +139,13 @@ player_vars:
     value_type: int
     initial_value: 2
 
+# BCP — enables MPF Monitor connection on port 5051
+bcp:
+  servers:
+    url_style:
+      ip: 127.0.0.1
+      port: 5051
+      type: mpf.core.bcp.bcp_socket_client.BCPClientSocket
+
 # Tilt is configured via MPF's built-in tilt plugin
 # tilt switch and slam_tilt are defined in switches.yaml

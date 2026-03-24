@@ -22,7 +22,7 @@ All game logic is built and tested in MPF's **virtual platform** before any hard
 
 ### Requirements
 
-- **Python 3.8–3.12** — required for MPF 0.57.4 (`Requires-Python: >=3.8,<3.13`)
+- **Python 3.12.x** — required for MPF 0.57.4 (`Requires-Python: >=3.8,<3.13`)
 - **MPF 0.57.4** — installed in `.venv`
 
 > **Note on MPF versions:** The original plan targeted MPF 0.80, which requires Python 3.10+
@@ -33,13 +33,13 @@ All game logic is built and tested in MPF's **virtual platform** before any hard
 ### Setup
 
 ```bash
-# Create and activate virtual environment
-python -m venv .venv
+# Create and activate virtual environment (requires Python 3.12.x)
+py -3.12 -m venv .venv
 .\.venv\Scripts\activate      # Windows
 source .venv/bin/activate     # Mac/Linux
 
-# Install MPF 0.57.4 (Python 3.8–3.12)
-pip install mpf==0.57.4
+# Install MPF 0.57.4 and dependencies
+pip install mpf==0.57.4 mpf-monitor pytest pytest-timeout
 
 # To use MPF 0.80 instead (requires Python 3.10+):
 # pip install mpf --pre
@@ -72,6 +72,23 @@ pip install mpf==0.57.4
 | H J | Left outlane, Kickback lane |
 | K | Drain |
 | L | Tilt |
+
+### MPF Monitor (Interactive Playfield UI)
+
+MPF Monitor provides a graphical view of your playfield with clickable switches, lights, and coils — useful for visual play-testing without physical hardware.
+
+```bash
+# Install MPF Monitor (one time)
+.\.venv\Scripts\pip.exe install mpf-monitor
+
+# Terminal 1 — start MPF in virtual mode
+.\.venv\Scripts\python.exe -m mpf machine -x
+
+# Terminal 2 — start the monitor (connects to the running MPF instance)
+.\.venv\Scripts\python.exe -m mpf monitor machine
+```
+
+> Both terminals must be running simultaneously. Start MPF first, then launch the monitor in a second terminal.
 
 ### Running Tests
 

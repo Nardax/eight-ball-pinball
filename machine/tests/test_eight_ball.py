@@ -51,12 +51,21 @@ class TestEightBall(MpfTestCase):
         self.advance_time_and_run(10)
 
     # ------------------------------------------------------------------
+    # Config validation — BCP section loads without error
+    # ------------------------------------------------------------------
+    def test_bcp_config_loaded(self):
+        """BCP must be configured so MPF Monitor can connect."""
+        self.assertIn("bcp", self.machine.config,
+                      "BCP section missing from config — MPF Monitor won't work")
+
+    # ------------------------------------------------------------------
     # 5.1.1 — Ball tracking: collecting ball 1 lights l_ball_1
     # ------------------------------------------------------------------
     def test_ball_1_collected_lights_insert(self):
         self._start_game()
         self.assertFalse(self.machine.game.player["ball_1_collected"])
-        self.hit_switch_and_run("s_lane_1", 1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(1)
         self.assertTrue(self.machine.game.player["ball_1_collected"])
         self.assertEqual(self.machine.lights["l_ball_1"].get_color(), [255, 255, 0])  # yellow
 
@@ -65,7 +74,8 @@ class TestEightBall(MpfTestCase):
     # ------------------------------------------------------------------
     def test_ball_2_collected_lights_insert(self):
         self._start_game()
-        self.hit_switch_and_run("s_lane_2", 1)
+        self.hit_and_release_switch("s_lane_2")
+        self.advance_time_and_run(1)
         self.assertTrue(self.machine.game.player["ball_2_collected"])
 
     # ------------------------------------------------------------------
@@ -74,7 +84,8 @@ class TestEightBall(MpfTestCase):
     def test_ball_collection_scores_3000(self):
         self._start_game()
         initial_score = self.machine.game.player.score
-        self.hit_switch_and_run("s_lane_1", 1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(1)
         self.assertEqual(self.machine.game.player.score, initial_score + 3000)
 
     # ------------------------------------------------------------------
@@ -82,9 +93,11 @@ class TestEightBall(MpfTestCase):
     # ------------------------------------------------------------------
     def test_ball_collected_only_once(self):
         self._start_game()
-        self.hit_switch_and_run("s_lane_1", 1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(1)
         score_after_first = self.machine.game.player.score
-        self.hit_switch_and_run("s_lane_1", 1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(1)
         self.assertEqual(self.machine.game.player.score, score_after_first)
 
     # ------------------------------------------------------------------
@@ -92,15 +105,18 @@ class TestEightBall(MpfTestCase):
     # ------------------------------------------------------------------
     def test_rack_completion_all_8_balls(self):
         self._start_game()
+        self.mock_event("eight_ball_rack_complete")
         for switch in ["s_lane_1", "s_lane_2", "s_lane_3", "s_lane_4",
                        "s_target_5", "s_target_6", "s_return_lane_7"]:
-            self.hit_switch_and_run(switch, 0.1)
+            self.hit_and_release_switch(switch)
+            self.advance_time_and_run(0.1)
         # 8-ball should now be collectable
         self.assertTrue(
             self.machine.game.player["ball_1_collected"] and
             self.machine.game.player["ball_7_collected"]
         )
-        self.hit_switch_and_run("s_eight_ball_target", 1)
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(1)
         self.assertTrue(self.machine.game.player["ball_8_collected"])
         self.assertEventCalled("eight_ball_rack_complete")
         # Rack complete: base_bonus_locked should be 24000
@@ -116,7 +132,8 @@ class TestEightBall(MpfTestCase):
         self._start_game()
         # Hit 8-ball before collecting 1-7 — ball 8 should NOT be collected
         self.assertFalse(self.machine.game.player["ball_7_collected"])
-        self.hit_switch_and_run("s_eight_ball_target", 1)
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(1)
         self.assertFalse(self.machine.game.player["ball_8_collected"])
 
     # ------------------------------------------------------------------
@@ -125,7 +142,8 @@ class TestEightBall(MpfTestCase):
     def test_kickback_lit_by_eight_ball_pad(self):
         self._start_game()
         self.assertFalse(self.machine.game.player["kickback_active"])
-        self.hit_switch_and_run("s_eight_ball_target", 1)
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(1)
         self.assertTrue(self.machine.game.player["kickback_active"])
         self.assertTrue(self.machine.game.player["spinner_lit"])
 
@@ -134,10 +152,13 @@ class TestEightBall(MpfTestCase):
     # ------------------------------------------------------------------
     def test_kickback_save_turns_off_kickback_and_spinner(self):
         self._start_game()
-        self.hit_switch_and_run("s_eight_ball_target", 1)
+        self.mock_event("kickback_fired")
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(1)
         self.assertTrue(self.machine.game.player["kickback_active"])
         # Ball enters outlane while kickback is lit
-        self.hit_switch_and_run("s_left_outlane", 1)
+        self.hit_and_release_switch("s_left_outlane")
+        self.advance_time_and_run(1)
         self.assertEventCalled("kickback_fired")
         self.assertFalse(self.machine.game.player["kickback_active"])
         self.assertFalse(self.machine.game.player["spinner_lit"])
@@ -149,8 +170,10 @@ class TestEightBall(MpfTestCase):
         self._start_game()
         self.assertFalse(self.machine.game.player["kickback_active"])
         # Outlane hit without kickback lit — kickback_fired should NOT post
-        with self.assertEventNotCalled("kickback_fired"):
-            self.hit_switch_and_run("s_left_outlane", 1)
+        self.mock_event("kickback_fired")
+        self.hit_and_release_switch("s_left_outlane")
+        self.advance_time_and_run(1)
+        self.assertEventNotCalled("kickback_fired")
 
     # ------------------------------------------------------------------
     # 5.1.10 — Bonus multiplier: star rollover progression
@@ -159,29 +182,34 @@ class TestEightBall(MpfTestCase):
         self._start_game()
         score_before_hit1 = self.machine.game.player.score
         # Hits 1-2: candy cane levels
-        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.hit_and_release_switch("s_star_rollover")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["star_hits"], 1)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 1)
         # +500 from bonus_mult + 100 from base = 600
         self.assertEqual(self.machine.game.player.score, score_before_hit1 + 600)
 
         score_before_hit2 = self.machine.game.player.score
-        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.hit_and_release_switch("s_star_rollover")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["star_hits"], 2)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 1)
         # +1000 from bonus_mult + 100 from base = 1100
         self.assertEqual(self.machine.game.player.score, score_before_hit2 + 1100)
 
         # Hit 3 → 2X
-        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.hit_and_release_switch("s_star_rollover")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 2)
 
         # Hit 4 → 3X
-        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.hit_and_release_switch("s_star_rollover")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 3)
 
         # Hit 5 → 5X
-        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.hit_and_release_switch("s_star_rollover")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 5)
 
     # ------------------------------------------------------------------
@@ -189,8 +217,10 @@ class TestEightBall(MpfTestCase):
     # ------------------------------------------------------------------
     def test_extra_ball_at_star_hit_6(self):
         self._start_game()
+        self.mock_event("extra_ball_awarded")
         for _ in range(6):
-            self.hit_switch_and_run("s_star_rollover", 0.1)
+            self.hit_and_release_switch("s_star_rollover")
+            self.advance_time_and_run(0.1)
         self.assertEventCalled("extra_ball_awarded")
 
     # ------------------------------------------------------------------
@@ -199,12 +229,16 @@ class TestEightBall(MpfTestCase):
     def test_bonus_calculation(self):
         self._start_game()
         # Collect 3 balls
-        self.hit_switch_and_run("s_lane_1", 0.1)
-        self.hit_switch_and_run("s_lane_2", 0.1)
-        self.hit_switch_and_run("s_lane_3", 0.1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(0.1)
+        self.hit_and_release_switch("s_lane_2")
+        self.advance_time_and_run(0.1)
+        self.hit_and_release_switch("s_lane_3")
+        self.advance_time_and_run(0.1)
         # Advance to 2X
         for _ in range(3):
-            self.hit_switch_and_run("s_star_rollover", 0.1)
+            self.hit_and_release_switch("s_star_rollover")
+            self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 2)
 
         score_before_drain = self.machine.game.player.score
@@ -222,13 +256,17 @@ class TestEightBall(MpfTestCase):
         # Ball 2: complete a full rack to lock in 24,000 base bonus
         for sw in ["s_lane_1", "s_lane_2", "s_lane_3", "s_lane_4",
                    "s_target_5", "s_target_6", "s_return_lane_7"]:
-            self.hit_switch_and_run(sw, 0.1)
-        self.hit_switch_and_run("s_eight_ball_target", 2.5)
+            self.hit_and_release_switch(sw)
+            self.advance_time_and_run(0.1)
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(2.5)
         # After rack: base_bonus_locked = 24000, balls_collected reset to 0
         self.assertEqual(self.machine.game.player["base_bonus_locked"], 24000)
         # Collect 2 more balls in new rack
-        self.hit_switch_and_run("s_lane_1", 0.1)
-        self.hit_switch_and_run("s_lane_2", 0.1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(0.1)
+        self.hit_and_release_switch("s_lane_2")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["balls_collected"], 2)
         # Multiplier defaults to 1 (no star rollovers done this ball)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 1)
@@ -249,7 +287,8 @@ class TestEightBall(MpfTestCase):
     def test_bonus_multiplier_resets_between_balls(self):
         self._start_game()
         for _ in range(3):
-            self.hit_switch_and_run("s_star_rollover", 0.1)
+            self.hit_and_release_switch("s_star_rollover")
+            self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["bonus_multiplier"], 2)
         self._drain_ball()
         self.machine_run()
@@ -262,7 +301,8 @@ class TestEightBall(MpfTestCase):
     def test_even_odd_player_ball_numbering(self):
         self._start_game(players=2)
         # Player 1 hits lane 1 → ball_1_collected
-        self.hit_switch_and_run("s_lane_1", 0.1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(0.1)
         self.assertTrue(self.machine.game.player["ball_1_collected"])
         # Drain and switch to player 2
         self._drain_ball()
@@ -270,7 +310,8 @@ class TestEightBall(MpfTestCase):
         # Player 2: player number is 2 → hits lane 1 → ball 9 slot (ball_1_collected for P2)
         self.assertEqual(self.machine.game.player.number, 2)
         self.assertFalse(self.machine.game.player["ball_1_collected"])
-        self.hit_switch_and_run("s_lane_1", 0.1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(0.1)
         # Player 2 should now have ball_1_collected = True (their slot for ball 9)
         self.assertTrue(self.machine.game.player["ball_1_collected"])
 
@@ -281,8 +322,10 @@ class TestEightBall(MpfTestCase):
         self._start_game()
         # Ball just launched (skill_shot mode is active on ball_started)
         self.assertModeRunning("skill_shot")
+        self.mock_event("skill_shot_awarded")
         score_before = self.machine.game.player.score
-        self.hit_switch_and_run("s_lane_4", 0.1)
+        self.hit_and_release_switch("s_lane_4")
+        self.advance_time_and_run(0.1)
         self.assertEventCalled("skill_shot_awarded")
         self.assertEqual(self.machine.game.player.score, score_before + 5000)
 
@@ -292,7 +335,9 @@ class TestEightBall(MpfTestCase):
     def test_skill_shot_missed_on_pop_bumper(self):
         self._start_game()
         self.assertModeRunning("skill_shot")
-        self.hit_switch_and_run("s_pop_bumper_left", 0.1)
+        self.mock_event("skill_shot_missed")
+        self.hit_and_release_switch("s_pop_bumper_left")
+        self.advance_time_and_run(0.1)
         self.assertEventCalled("skill_shot_missed")
         self.assertModeNotRunning("skill_shot")
 
@@ -303,16 +348,19 @@ class TestEightBall(MpfTestCase):
         self._start_game()
         # Unlit spinner → 100 pts
         score_before = self.machine.game.player.score
-        self.hit_switch_and_run("s_spinner", 0.1)
+        self.hit_and_release_switch("s_spinner")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player.score, score_before + 100)
 
         # Light the spinner
-        self.hit_switch_and_run("s_eight_ball_target", 0.1)
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(0.1)
         self.assertTrue(self.machine.game.player["spinner_lit"])
 
         # Lit spinner → 1000 pts
         score_before = self.machine.game.player.score
-        self.hit_switch_and_run("s_spinner", 0.1)
+        self.hit_and_release_switch("s_spinner")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player.score, score_before + 1000)
 
     # ------------------------------------------------------------------
@@ -323,8 +371,10 @@ class TestEightBall(MpfTestCase):
         # Complete a rack
         for sw in ["s_lane_1", "s_lane_2", "s_lane_3", "s_lane_4",
                    "s_target_5", "s_target_6", "s_return_lane_7"]:
-            self.hit_switch_and_run(sw, 0.1)
-        self.hit_switch_and_run("s_eight_ball_target", 0.5)
+            self.hit_and_release_switch(sw)
+            self.advance_time_and_run(0.1)
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(0.5)
         self.assertEqual(self.machine.game.player["base_bonus_locked"], 24000)
         # Drain ball 1 — locked bonus should persist on ball 2
         self._drain_ball()
@@ -336,7 +386,7 @@ class TestEightBall(MpfTestCase):
     # ------------------------------------------------------------------
     def test_multi_player_game_flow(self):
         self._start_game(players=4)
-        self.assertEqual(len(self.machine.game.players), 4)
+        self.assertEqual(len(self.machine.game.player_list), 4)
         self.assertEqual(self.machine.game.player.ball, 1)
         # Each player drains and advances
         for _ in range(4):
@@ -352,7 +402,8 @@ class TestEightBall(MpfTestCase):
     def test_star_rollover_hit_1_scores_500(self):
         self._start_game()
         score_before = self.machine.game.player.score
-        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.hit_and_release_switch("s_star_rollover")
+        self.advance_time_and_run(0.1)
         # bonus_mult: +500; base: +100 → total +600
         self.assertEqual(self.machine.game.player.score, score_before + 600)
         self.assertEqual(self.machine.game.player["star_hits"], 1)
@@ -364,8 +415,10 @@ class TestEightBall(MpfTestCase):
     def test_star_rollover_hit_2_scores_1000(self):
         self._start_game()
         score_before = self.machine.game.player.score
-        self.hit_switch_and_run("s_star_rollover", 0.1)
-        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.hit_and_release_switch("s_star_rollover")
+        self.advance_time_and_run(0.1)
+        self.hit_and_release_switch("s_star_rollover")
+        self.advance_time_and_run(0.1)
         # Hit 1: +600; hit 2: +1100 → cumulative +1700
         self.assertEqual(self.machine.game.player.score, score_before + 1700)
         self.assertEqual(self.machine.game.player["star_hits"], 2)
@@ -376,14 +429,17 @@ class TestEightBall(MpfTestCase):
     # ------------------------------------------------------------------
     def test_star_rollover_hit_7_plus_scores_5000(self):
         self._start_game()
+        self.mock_event("extra_ball_awarded")
         # Hits 1-6
         for _ in range(6):
-            self.hit_switch_and_run("s_star_rollover", 0.1)
+            self.hit_and_release_switch("s_star_rollover")
+            self.advance_time_and_run(0.1)
         self.assertEventCalled("extra_ball_awarded")
         self.assertEqual(self.machine.game.player["star_hits"], 6)
         # Hit 7: bonus_mult scores 5000 (star_hits>=7), base scores 100 → total +5100
         score_before_hit7 = self.machine.game.player.score
-        self.hit_switch_and_run("s_star_rollover", 0.1)
+        self.hit_and_release_switch("s_star_rollover")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["star_hits"], 7)
         self.assertEqual(self.machine.game.player.score, score_before_hit7 + 5100)
 
@@ -392,12 +448,15 @@ class TestEightBall(MpfTestCase):
     # ------------------------------------------------------------------
     def test_kickback_coil_fires_on_save(self):
         self._start_game()
+        self.mock_event("kickback_fired")
         # Light kickback and spinner via 8-ball pad
-        self.hit_switch_and_run("s_eight_ball_target", 0.1)
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(0.1)
         self.assertTrue(self.machine.game.player["kickback_active"])
         self.assertTrue(self.machine.game.player["spinner_lit"])
         # Ball enters outlane while kickback is active → kickback_fired
-        self.hit_switch_and_run("s_left_outlane", 1)
+        self.hit_and_release_switch("s_left_outlane")
+        self.advance_time_and_run(1)
         self.assertEventCalled("kickback_fired")
         # Kickback and spinner should now be off
         self.assertFalse(self.machine.game.player["kickback_active"])
@@ -411,8 +470,10 @@ class TestEightBall(MpfTestCase):
         # Ball 1: complete rack 1 → base_bonus_locked = 24000
         for sw in ["s_lane_1", "s_lane_2", "s_lane_3", "s_lane_4",
                    "s_target_5", "s_target_6", "s_return_lane_7"]:
-            self.hit_switch_and_run(sw, 0.1)
-        self.hit_switch_and_run("s_eight_ball_target", 2.5)
+            self.hit_and_release_switch(sw)
+            self.advance_time_and_run(0.1)
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(2.5)
         self.assertEqual(self.machine.game.player["base_bonus_locked"], 24000)
         self.assertEqual(self.machine.game.player["balls_collected"], 0)
         # Drain ball 1: bonus = (0 × 3000 × 1) + 24000 = 24000
@@ -430,8 +491,10 @@ class TestEightBall(MpfTestCase):
         # Ball 2: complete rack 2 → base_bonus_locked = 48000
         for sw in ["s_lane_1", "s_lane_2", "s_lane_3", "s_lane_4",
                    "s_target_5", "s_target_6", "s_return_lane_7"]:
-            self.hit_switch_and_run(sw, 0.1)
-        self.hit_switch_and_run("s_eight_ball_target", 2.5)
+            self.hit_and_release_switch(sw)
+            self.advance_time_and_run(0.1)
+        self.hit_and_release_switch("s_eight_ball_target")
+        self.advance_time_and_run(2.5)
         self.assertEqual(self.machine.game.player["base_bonus_locked"], 48000)
         self.assertEqual(self.machine.game.player["balls_collected"], 0)
         # Drain ball 2: bonus = (0 × 3000 × 1) + 48000 = 48000
@@ -452,8 +515,10 @@ class TestEightBall(MpfTestCase):
         # Initial value from config.yaml is 2
         self.assertEqual(self.machine.game.player["lit_advance_lane"], 2)
         # Hit lane 1 → lit_advance_lane toggles to 3
-        self.hit_switch_and_run("s_lane_1", 0.1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["lit_advance_lane"], 3)
         # Hit lane 1 again → toggles back to 2
-        self.hit_switch_and_run("s_lane_1", 0.1)
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["lit_advance_lane"], 2)
