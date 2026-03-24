@@ -36,7 +36,14 @@
 
 - duration: 0.15
   lights:
-    (l_ball_1, l_ball_2, l_ball_3, l_ball_4, l_ball_5, l_ball_6, l_ball_7, l_ball_8): white
+    l_ball_1: white
+    l_ball_2: white
+    l_ball_3: white
+    l_ball_4: white
+    l_ball_5: white
+    l_ball_6: white
+    l_ball_7: white
+    l_ball_8: white
     l_pop_left: white
     l_pop_right: white
     l_pop_top: white
@@ -45,7 +52,14 @@
 
 - duration: 0.5
   lights:
-    (l_ball_1, l_ball_2, l_ball_3, l_ball_4, l_ball_5, l_ball_6, l_ball_7, l_ball_8): off
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
     l_pop_left: off
     l_pop_right: off
     l_pop_top: off

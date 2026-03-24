@@ -330,6 +330,44 @@ switches:
 
 ---
 
+---
+
+## ADR-016: MPF 0.57.4 Is the Latest Stable Release — ADR-002 Framing Superseded
+
+**Status:** Accepted — supersedes the *rationale* (not the conclusion) of ADR-002
+
+**Context:**  
+ADR-002 documented choosing MPF 0.57.4 as a *constraint-driven fallback* because Python 3.9.13
+was the only available Python and MPF 0.80 required 3.10+. This framing implied 0.57.4 was a
+temporary workaround until 0.80 was reachable.
+
+As of January 19, 2026, **MPF 0.57.4 is the latest stable release on PyPI**. MPF 0.80 remains
+in beta. Per non-negotiable project constraints, the latest stable MPF must always be used.
+MPF 0.57.4 satisfies this constraint — it is not a workaround.
+
+The Python constraint remains real but must be reframed: `>=3.8,<3.13` means the *most recent
+stable Python supported* is **Python 3.12.x**. Python 3.9.13 (currently installed) satisfies the
+lower bound but not the non-negotiable requirement to use the *most recent stable* supported
+Python. Python must be upgraded to 3.12.x.
+
+**Decision:**
+- Confirm MPF 0.57.4 as the correct version selection — it IS the latest stable, not a fallback
+- Python 3.9.13 must be upgraded to **Python 3.12.x** before the next venv rebuild to satisfy
+  the non-negotiable "most recent stable Python" constraint
+- After upgrade: delete `.venv`, recreate with Python 3.12, reinstall `mpf==0.57.4`
+- Kivy MC remains the media controller for 0.57.4 (Godot GMC applies only to 0.80 beta)
+- When MPF 0.80 reaches stable, open a new ADR for the upgrade decision
+
+**Consequences:**
+- ADR-002's *conclusion* (use 0.57.4) is correct and unchanged
+- ADR-002's *framing* (0.57.4 as a workaround) is obsolete — do not use it as justification
+- All existing YAML config files remain valid — no syntax changes needed for this ADR
+- All 25 automated tests remain valid
+- The Python upgrade is a prerequisite for the next venv rebuild; existing `.venv` (3.9.13)
+  may be used for current development until a rebuild is needed
+
+---
+
 ## Future Decisions Pending (Phase 6+)
 
 | Decision | Status |

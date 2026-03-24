@@ -9,11 +9,13 @@ coils:
     label: Left Flipper
     number:
     default_pulse_ms: 30
+    default_hold_power: 0.125
 
   c_flipper_right:
     label: Right Flipper
     number:
     default_pulse_ms: 30
+    default_hold_power: 0.125
 
   # --- Pop bumpers ---
   c_pop_bumper_left:

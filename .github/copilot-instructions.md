@@ -4,6 +4,16 @@ This is a **Bally Eight Ball (1977) pinball machine rebuild** using Mission Pinb
 
 ---
 
+## Versions
+
+[Non Negotiable]
+The latest and greatest stable version of MFP must be used at all times.
+
+[Non Negotiable]
+The system should be built using the most recent stable version of Python that is supported by the most recent stable version of MFP.
+
+---
+
 ## Commands
 
 ```bash

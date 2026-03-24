@@ -118,21 +118,21 @@ player_vars:
     initial_value: 0
 
   kickback_active:
-    value_type: bool
-    initial_value: false
+    value_type: int
+    initial_value: 0
 
   spinner_lit:
-    value_type: bool
-    initial_value: false
+    value_type: int
+    initial_value: 0
 
-  ball_1_collected:  {value_type: bool, initial_value: false}
-  ball_2_collected:  {value_type: bool, initial_value: false}
-  ball_3_collected:  {value_type: bool, initial_value: false}
-  ball_4_collected:  {value_type: bool, initial_value: false}
-  ball_5_collected:  {value_type: bool, initial_value: false}
-  ball_6_collected:  {value_type: bool, initial_value: false}
-  ball_7_collected:  {value_type: bool, initial_value: false}
-  ball_8_collected:  {value_type: bool, initial_value: false}
+  ball_1_collected:  {value_type: int, initial_value: 0}
+  ball_2_collected:  {value_type: int, initial_value: 0}
+  ball_3_collected:  {value_type: int, initial_value: 0}
+  ball_4_collected:  {value_type: int, initial_value: 0}
+  ball_5_collected:  {value_type: int, initial_value: 0}
+  ball_6_collected:  {value_type: int, initial_value: 0}
+  ball_7_collected:  {value_type: int, initial_value: 0}
+  ball_8_collected:  {value_type: int, initial_value: 0}
 
   # Tracks which of lane 2 or lane 3 is lit for multiplier advance
   lit_advance_lane:
