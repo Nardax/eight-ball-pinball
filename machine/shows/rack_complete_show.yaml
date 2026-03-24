@@ -1,0 +1,53 @@
+#show_version=6
+
+# Rack Complete celebration — all inserts flash in sequence then white
+
+- duration: 0.15
+  lights:
+    l_ball_1: red
+    l_ball_2: blue
+    l_ball_3: red
+    l_ball_4: blue
+    l_ball_5: red
+    l_ball_6: blue
+    l_ball_7: red
+    l_ball_8: "111111"
+    l_pop_left: yellow
+    l_pop_right: yellow
+    l_pop_top: yellow
+    l_gi_playfield: white
+    l_gi_backbox: white
+
+- duration: 0.15
+  lights:
+    l_ball_1: blue
+    l_ball_2: red
+    l_ball_3: blue
+    l_ball_4: red
+    l_ball_5: blue
+    l_ball_6: red
+    l_ball_7: blue
+    l_ball_8: "111111"
+    l_pop_left: orange
+    l_pop_right: orange
+    l_pop_top: orange
+    l_gi_playfield: yellow
+    l_gi_backbox: yellow
+
+- duration: 0.15
+  lights:
+    (l_ball_1, l_ball_2, l_ball_3, l_ball_4, l_ball_5, l_ball_6, l_ball_7, l_ball_8): white
+    l_pop_left: white
+    l_pop_right: white
+    l_pop_top: white
+    l_gi_playfield: white
+    l_gi_backbox: white
+
+- duration: 0.5
+  lights:
+    (l_ball_1, l_ball_2, l_ball_3, l_ball_4, l_ball_5, l_ball_6, l_ball_7, l_ball_8): off
+    l_pop_left: off
+    l_pop_right: off
+    l_pop_top: off
+    l_gi_playfield: "111111"
+    l_gi_backbox: "111111"

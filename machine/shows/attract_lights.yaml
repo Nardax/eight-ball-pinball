@@ -1,0 +1,131 @@
+#show_version=6
+
+# Attract mode light show — cycles through RGB colors across all LEDs
+
+- duration: 0.3
+  lights:
+    l_ball_1: red
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+    l_pop_left: red
+    l_pop_right: off
+    l_pop_top: off
+    l_gi_playfield: "220020"
+    l_gi_backbox: "220020"
+
+- duration: 0.3
+  lights:
+    l_ball_1: off
+    l_ball_2: yellow
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+    l_pop_left: off
+    l_pop_right: yellow
+    l_pop_top: off
+    l_gi_playfield: "223300"
+    l_gi_backbox: "223300"
+
+- duration: 0.3
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: green
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+    l_pop_left: off
+    l_pop_right: off
+    l_pop_top: green
+    l_gi_playfield: "002200"
+    l_gi_backbox: "002200"
+
+- duration: 0.3
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: blue
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+    l_pop_left: blue
+    l_pop_right: off
+    l_pop_top: off
+    l_gi_playfield: "000033"
+    l_gi_backbox: "000033"
+
+- duration: 0.3
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: purple
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+    l_pop_left: off
+    l_pop_right: purple
+    l_pop_top: off
+    l_gi_playfield: "220033"
+    l_gi_backbox: "220033"
+
+- duration: 0.3
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: orange
+    l_ball_7: off
+    l_ball_8: off
+    l_pop_left: off
+    l_pop_right: off
+    l_pop_top: orange
+    l_gi_playfield: "331500"
+    l_gi_backbox: "331500"
+
+- duration: 0.3
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: white
+    l_ball_8: off
+    l_pop_left: white
+    l_pop_right: off
+    l_pop_top: off
+    l_gi_playfield: "333333"
+    l_gi_backbox: "333333"
+
+- duration: 0.3
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: "111111"
+    l_pop_left: off
+    l_pop_right: "111111"
+    l_pop_top: "111111"
+    l_gi_playfield: "111111"
+    l_gi_backbox: "111111"

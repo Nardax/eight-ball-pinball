@@ -1,0 +1,128 @@
+#config_version=6
+
+# Bonus Multiplier Mode
+# Star rollover (candy cane) progression:
+#   Hit 1 → candy cane level 1 (+score)
+#   Hit 2 → candy cane level 2 (+score)
+#   Hit 3 → 2X multiplier
+#   Hit 4 → 3X multiplier
+#   Hit 5 → 5X multiplier
+#   Hit 6 → Extra Ball
+#   Hit 7+ → 5000 per hit
+#
+# Lane 2 or 3 (whichever is lit) advances multiplier once all 4 top lanes complete.
+# Which lane is lit alternates on any switch hit.
+
+mode:
+  start_events: ball_started
+  stop_events: ball_ended
+  priority: 120
+  game_mode: true
+
+variable_player:
+  # Increment star hit counter on each star rollover
+  s_star_rollover_active:
+    star_hits:
+      int: player.star_hits + 1
+
+  # Hit 1 — candy cane level 1 (500 pts)
+  s_star_rollover_active{player.star_hits==1}:
+    score: 500
+
+  # Hit 2 — candy cane level 2 (1000 pts)
+  s_star_rollover_active{player.star_hits==2}:
+    score: 1000
+
+  # Hit 3 — 2X multiplier
+  s_star_rollover_active{player.star_hits==3}:
+    bonus_multiplier: 2
+    score: 0
+
+  # Hit 4 — 3X multiplier
+  s_star_rollover_active{player.star_hits==4}:
+    bonus_multiplier: 3
+    score: 0
+
+  # Hit 5 — 5X multiplier
+  s_star_rollover_active{player.star_hits==5}:
+    bonus_multiplier: 5
+    score: 0
+
+  # Hit 7+ — 5000 per hit
+  s_star_rollover_active{player.star_hits>=7}:
+    score: 5000
+
+  # Lane advance: if all 4 top lanes collected, lit lane advances multiplier
+  s_lane_2_active{player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.lit_advance_lane==2}:
+    star_hits:
+      int: player.star_hits + 1
+
+  s_lane_3_active{player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.lit_advance_lane==3}:
+    star_hits:
+      int: player.star_hits + 1
+
+  # Alternate which lane is lit on any switch
+  s_lane_1_active{player.lit_advance_lane==2}:
+    lit_advance_lane: 3
+  s_lane_1_active{player.lit_advance_lane==3}:
+    lit_advance_lane: 2
+  s_lane_2_active{player.lit_advance_lane==2}:
+    lit_advance_lane: 3
+  s_lane_2_active{player.lit_advance_lane==3}:
+    lit_advance_lane: 2
+  s_lane_3_active{player.lit_advance_lane==2}:
+    lit_advance_lane: 3
+  s_lane_3_active{player.lit_advance_lane==3}:
+    lit_advance_lane: 2
+  s_lane_4_active{player.lit_advance_lane==2}:
+    lit_advance_lane: 3
+  s_lane_4_active{player.lit_advance_lane==3}:
+    lit_advance_lane: 2
+
+# Light the multiplier LEDs as they are reached
+light_player:
+  s_star_rollover_active{player.star_hits==1}:
+    l_candy_1:
+      color: yellow
+  s_star_rollover_active{player.star_hits==2}:
+    l_candy_2:
+      color: yellow
+  s_star_rollover_active{player.star_hits>=3}:
+    l_mult_2x:
+      color: green
+  s_star_rollover_active{player.star_hits>=4}:
+    l_mult_3x:
+      color: green
+  s_star_rollover_active{player.star_hits>=5}:
+    l_mult_5x:
+      color: green
+  s_star_rollover_active{player.star_hits>=6}:
+    l_extra_ball:
+      color: white
+
+  # Lane-lit indicators — show which of lane 2/3 is lit for multiplier advance
+  mode_bonus_mult_started{player.lit_advance_lane==2}:
+    l_lane_2_lit:
+      color: white
+    l_lane_3_lit:
+      color: off
+  mode_bonus_mult_started{player.lit_advance_lane==3}:
+    l_lane_3_lit:
+      color: white
+    l_lane_2_lit:
+      color: off
+
+# Award extra ball at hit 6
+event_player:
+  s_star_rollover_active{player.star_hits==6}:
+    - extra_ball_awarded
+
+# Extra ball
+extra_balls:
+  extra_ball_bonus_mult:
+    award_events: extra_ball_awarded
+
+sound_player:
+  extra_ball_awarded:
+    sfx_extra_ball:
+      action: play

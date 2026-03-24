@@ -1,0 +1,83 @@
+#config_version=6
+
+# Skill Shot Mode
+# Active from ball launch until ball hits any non-top-lane playfield switch
+# Target lane varies by ball number and lane completion state
+
+mode:
+  start_events: ball_started
+  stop_events: ball_ended, skill_shot_missed, skill_shot_awarded
+  priority: 200
+  game_mode: true
+
+slide_player:
+  mode_skill_shot_started: skill_shot_slide
+  skill_shot_awarded: skill_shot_awarded_slide
+
+slides:
+  skill_shot_slide:
+    widgets:
+      - type: text
+        text: SKILL SHOT!
+        font_size: 28
+        y: 50%
+
+  skill_shot_awarded_slide:
+    widgets:
+      - type: text
+        text: SKILL SHOT! +5000
+        font_size: 28
+        y: 50%
+
+# Skill shot is awarded when the target top lane is hit during plunger activity
+# Target: lane 4 on ball 1; lane matching remaining uncollected on subsequent balls
+# If all 4 lanes done: whichever of lane 2/3 is lit for multiplier advance
+
+event_player:
+  # Any non-top-lane switch = skill shot missed
+  s_pop_bumper_left_active:
+    - skill_shot_missed
+  s_pop_bumper_right_active:
+    - skill_shot_missed
+  s_pop_bumper_top_active:
+    - skill_shot_missed
+  s_slingshot_left_active:
+    - skill_shot_missed
+  s_slingshot_right_active:
+    - skill_shot_missed
+  s_spinner_active:
+    - skill_shot_missed
+  s_target_5_active:
+    - skill_shot_missed
+  s_target_6_active:
+    - skill_shot_missed
+
+  # Skill shot: ball 1 → lane 4
+  s_lane_4_active{current_player.ball==1}:
+    - skill_shot_awarded
+
+  # Subsequent balls: any uncollected lane counts (lane 1-4 checks)
+  s_lane_1_active{current_player.ball>1 and not player.ball_1_collected}:
+    - skill_shot_awarded
+  s_lane_2_active{current_player.ball>1 and not player.ball_2_collected}:
+    - skill_shot_awarded
+  s_lane_3_active{current_player.ball>1 and not player.ball_3_collected}:
+    - skill_shot_awarded
+  s_lane_4_active{current_player.ball>1 and not player.ball_4_collected}:
+    - skill_shot_awarded
+
+  # If all 4 lanes done — lit advance lane
+  s_lane_2_active{current_player.ball>1 and player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.lit_advance_lane==2}:
+    - skill_shot_awarded
+  s_lane_3_active{current_player.ball>1 and player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.lit_advance_lane==3}:
+    - skill_shot_awarded
+
+variable_player:
+  skill_shot_awarded:
+    score: 5000
+
+sound_player:
+  skill_shot_awarded:
+    sfx_extra_ball:
+      action: play
+

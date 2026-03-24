@@ -1,0 +1,91 @@
+#show_version=6
+
+# Bonus collect show — sequential LED flash during bonus count-up
+
+- duration: 0.2
+  lights:
+    l_ball_1: yellow
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+
+- duration: 0.2
+  lights:
+    l_ball_1: off
+    l_ball_2: blue
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+
+- duration: 0.2
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: red
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+
+- duration: 0.2
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: purple
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+
+- duration: 0.2
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: orange
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: off
+
+- duration: 0.2
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: green
+    l_ball_7: off
+    l_ball_8: off
+
+- duration: 0.2
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: maroon
+    l_ball_8: off
+
+- duration: 0.2
+  lights:
+    l_ball_1: off
+    l_ball_2: off
+    l_ball_3: off
+    l_ball_4: off
+    l_ball_5: off
+    l_ball_6: off
+    l_ball_7: off
+    l_ball_8: "111111"

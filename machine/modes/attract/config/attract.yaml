@@ -1,0 +1,46 @@
+#config_version=6
+
+# Attract Mode — light show, cycling display, start-game handling
+
+mode:
+  start_events: machine_reset_phase_3
+  stop_events: game_starting
+  priority: 10
+
+slides:
+  attract_slide:
+    widgets:
+      - type: text
+        text: EIGHT BALL PINBALL
+        font_size: 36
+        y: 60%
+      - type: text
+        text: PRESS START
+        font_size: 24
+        y: 40%
+        animations:
+          show_slide:
+            - property: opacity
+              value: 1
+              duration: 0.6
+            - property: opacity
+              value: 0
+              duration: 0.6
+              repeat: true
+
+slide_player:
+  mode_attract_started: attract_slide
+
+show_player:
+  mode_attract_started: attract_lights
+
+sound_player:
+  mode_attract_started:
+    music_attract:
+      action: play
+      loops: -1
+
+  mode_attract_stopped:
+    music_attract:
+      action: stop
+

@@ -1,0 +1,88 @@
+#config_version=6
+
+# Eight Ball Pinball — Coil/Driver Definitions
+# Virtual mode: names only. FAST physical addresses added in Phase 6.
+
+coils:
+  # --- Flippers ---
+  c_flipper_left:
+    label: Left Flipper
+    number:
+    default_pulse_ms: 30
+
+  c_flipper_right:
+    label: Right Flipper
+    number:
+    default_pulse_ms: 30
+
+  # --- Pop bumpers ---
+  c_pop_bumper_left:
+    label: Left Pop Bumper
+    number:
+    default_pulse_ms: 20
+
+  c_pop_bumper_right:
+    label: Right Pop Bumper
+    number:
+    default_pulse_ms: 20
+
+  c_pop_bumper_top:
+    label: Top Pop Bumper
+    number:
+    default_pulse_ms: 20
+
+  # --- Slingshots ---
+  c_slingshot_left:
+    label: Left Slingshot
+    number:
+    default_pulse_ms: 20
+
+  c_slingshot_right:
+    label: Right Slingshot
+    number:
+    default_pulse_ms: 20
+
+  # --- Kickback ---
+  c_kickback:
+    label: Kickback
+    number:
+    default_pulse_ms: 30
+
+  # --- Ball trough / outhole ---
+  c_outhole_eject:
+    label: Outhole Eject
+    number:
+    default_pulse_ms: 20
+
+  c_trough_eject:
+    label: Trough Eject
+    number:
+    default_pulse_ms: 20
+
+  # --- Chimebox chimes ---
+  # Verify coil resistance vs. 48V FAST driver output before wiring
+  c_chime_high:
+    label: Chime High (1000-pt events)
+    number:
+    default_pulse_ms: 20
+
+  c_chime_mid:
+    label: Chime Mid (100-pt events)
+    number:
+    default_pulse_ms: 20
+
+  c_chime_low:
+    label: Chime Low (10-pt events)
+    number:
+    default_pulse_ms: 20
+
+  c_chime_extra:
+    label: Chime Extra (optional 4th chime)
+    number:
+    default_pulse_ms: 20
+
+  # --- Knocker ---
+  c_knocker:
+    label: Knocker
+    number:
+    default_pulse_ms: 20

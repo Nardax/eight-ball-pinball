@@ -1,0 +1,148 @@
+#config_version=6
+
+# Eight Ball Pinball — Switch Definitions
+# Virtual mode: names only. Physical FAST addresses added in Phase 6.
+
+switches:
+  # --- Top lane rollovers ---
+  s_lane_1:
+    label: Top Lane 1
+    number:
+    tags: playfield, top_lane
+
+  s_lane_2:
+    label: Top Lane 2
+    number:
+    tags: playfield, top_lane
+
+  s_lane_3:
+    label: Top Lane 3
+    number:
+    tags: playfield, top_lane
+
+  s_lane_4:
+    label: Top Lane 4
+    number:
+    tags: playfield, top_lane
+
+  # --- Stand-up targets ---
+  s_target_5:
+    label: Stand-up Target 5
+    number:
+    tags: playfield, standup
+
+  s_target_6:
+    label: Stand-up Target 6
+    number:
+    tags: playfield, standup
+
+  # --- Return lane ---
+  s_return_lane_7:
+    label: Right Return Lane (Ball 7)
+    number:
+    tags: playfield, return_lane
+
+  # --- 8-ball pad ---
+  s_eight_ball_target:
+    label: 8-Ball Pad Target
+    number:
+    tags: playfield, eight_ball
+
+  # --- Spinner ---
+  s_spinner:
+    label: Spinner
+    number:
+    tags: playfield, spinner
+
+  # --- Star rollover (candy cane top) ---
+  s_star_rollover:
+    label: Star Rollover (Candy Cane)
+    number:
+    tags: playfield, star_rollover
+
+  # --- Pop bumpers ---
+  s_pop_bumper_left:
+    label: Left Pop Bumper
+    number:
+    tags: playfield, pop_bumper
+
+  s_pop_bumper_right:
+    label: Right Pop Bumper
+    number:
+    tags: playfield, pop_bumper
+
+  s_pop_bumper_top:
+    label: Top Pop Bumper
+    number:
+    tags: playfield, pop_bumper
+
+  # --- Slingshots ---
+  s_slingshot_left:
+    label: Left Slingshot
+    number:
+    tags: playfield, slingshot
+
+  s_slingshot_right:
+    label: Right Slingshot
+    number:
+    tags: playfield, slingshot
+
+  # --- Outlane / Kickback lane ---
+  s_left_outlane:
+    label: Left Outlane
+    number:
+    tags: playfield, outlane
+
+  s_kickback_lane:
+    label: Kickback Lane
+    number:
+    tags: playfield, kickback
+
+  # --- Ball trough / drain ---
+  s_trough_1:
+    label: Trough Ball 1
+    number:
+    tags: home
+
+  s_outhole:
+    label: Outhole
+    number:
+    tags: drain
+
+  # --- Plunger lane ---
+  s_plunger_lane:
+    label: Plunger Lane
+    number:
+    tags: plunger
+
+  # --- Cabinet switches ---
+  s_start_button:
+    label: Start Button
+    number:
+    tags: start
+
+  s_coin:
+    label: Coin Insert
+    number:
+    tags: coin
+
+  s_tilt:
+    label: Tilt (Plumb Bob)
+    number:
+    tags: tilt
+
+  s_slam_tilt:
+    label: Slam Tilt
+    number:
+    tags: slam_tilt
+
+  # --- Flipper buttons ---
+  s_flipper_left:
+    label: Left Flipper Button
+    number:
+    tags: flipper
+
+  s_flipper_right:
+    label: Right Flipper Button
+    number:
+    tags: flipper

@@ -158,3 +158,12 @@ cython_debug/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
+
+# MPF logs and cache
+machine/logs/
+*.mpf_cache
+
+# Sound assets (large binary files - add to git-lfs or keep local)
+machine/sounds/*.wav
+machine/sounds/*.mp3
+machine/sounds/*.ogg

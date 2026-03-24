@@ -1,0 +1,46 @@
+#config_version=6
+
+# End-of-Ball Bonus Mode
+# Uses MPF's built-in bonus mode plugin.
+# Formula: (balls_collected x 3000) x bonus_multiplier + base_bonus_locked
+# Multiplier does NOT carry over between balls (keep_multiplier: false).
+# Collected balls within current rack DO carry over between balls.
+
+mode_settings:
+  keep_multiplier: false
+  bonus_entries:
+    - event: bonus_balls_collected
+      score: 3000
+      player_score_entry: balls_collected
+    - event: bonus_base_locked
+      score: 1
+      player_score_entry: base_bonus_locked
+
+slides:
+  bonus_slide:
+    widgets:
+      - type: text
+        text: BONUS
+        font_size: 36
+        y: 80%
+      - type: text
+        text: X(player.bonus_multiplier)
+        font_size: 24
+        y: 35%
+
+slide_player:
+  mode_bonus_started: bonus_slide
+
+show_player:
+  mode_bonus_started: bonus_collect
+
+sound_player:
+  mode_bonus_started:
+    sfx_bonus_count:
+      action: play
+      loops: 5
+
+# Reset star hits counter after bonus complete
+variable_player:
+  bonus_complete:
+    star_hits: 0

@@ -1,0 +1,314 @@
+#config_version=6
+
+# Base Game Mode - 4-player, ball tracking, pool ball collection,
+# spinner scoring, slingshot/pop-bumper scoring, chime events
+
+mode:
+  start_events: game_started
+  stop_events: game_ended
+  priority: 100
+  game_mode: true
+
+slides:
+  base_slide:
+    widgets:
+      - type: text
+        text: "PLAYER {machine.current_player.number}"
+        font_size: 18
+        y: 92%
+      - type: text
+        text: "{machine.current_player.score}"
+        font_size: 48
+        y: 75%
+      - type: text
+        text: "BALL {machine.game.ball}"
+        font_size: 18
+        y: 55%
+
+slide_player:
+  mode_base_started: base_slide
+
+# ---------------------------------------------------------------
+# SCORING - pop bumpers, slingshots, rollovers, spinner
+# ---------------------------------------------------------------
+variable_player:
+  s_pop_bumper_left_active:
+    score: 100
+  s_pop_bumper_right_active:
+    score: 100
+  s_pop_bumper_top_active:
+    score: 100
+  s_slingshot_left_active:
+    score: 10
+  s_slingshot_right_active:
+    score: 10
+  s_spinner_active{player.spinner_lit}:
+    score: 1000
+  s_spinner_active{not player.spinner_lit}:
+    score: 100
+  s_star_rollover_active:
+    score: 100
+
+  # --- Ball collection scoring: 3000 per ball, each only once ---
+  # Odd players (1 & 3): balls 1-8
+  ball_1_collected_p_odd{not player.ball_1_collected}:
+    score: 3000
+    ball_1_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_2_collected_p_odd{not player.ball_2_collected}:
+    score: 3000
+    ball_2_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_3_collected_p_odd{not player.ball_3_collected}:
+    score: 3000
+    ball_3_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_4_collected_p_odd{not player.ball_4_collected}:
+    score: 3000
+    ball_4_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_5_collected_p_odd{not player.ball_5_collected}:
+    score: 3000
+    ball_5_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_6_collected_p_odd{not player.ball_6_collected}:
+    score: 3000
+    ball_6_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_7_collected_p_odd{not player.ball_7_collected}:
+    score: 3000
+    ball_7_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_8_collected_ready{not player.ball_8_collected}:
+    score: 3000
+    ball_8_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+
+  # Even players (2 & 4): balls 9-15 map to same boolean slots as 1-7
+  ball_9_collected_p_even{not player.ball_1_collected}:
+    score: 3000
+    ball_1_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_10_collected_p_even{not player.ball_2_collected}:
+    score: 3000
+    ball_2_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_11_collected_p_even{not player.ball_3_collected}:
+    score: 3000
+    ball_3_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_12_collected_p_even{not player.ball_4_collected}:
+    score: 3000
+    ball_4_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_13_collected_p_even{not player.ball_5_collected}:
+    score: 3000
+    ball_5_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_14_collected_p_even{not player.ball_6_collected}:
+    score: 3000
+    ball_6_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+  ball_15_collected_p_even{not player.ball_7_collected}:
+    score: 3000
+    ball_7_collected: true
+    balls_collected:
+      int: player.balls_collected + 1
+
+# ---------------------------------------------------------------
+# CHIME COIL EVENTS
+# Virtual: logged. Hardware: coils pulse.
+# ---------------------------------------------------------------
+coil_player:
+  score_change{change>999}:
+    c_chime_high:
+      action: pulse
+  score_change{change>99 and change<1000}:
+    c_chime_mid:
+      action: pulse
+  score_change{change<100 and change>0}:
+    c_chime_low:
+      action: pulse
+
+# ---------------------------------------------------------------
+# SOUND - per-switch SFX
+# ---------------------------------------------------------------
+sound_player:
+  s_pop_bumper_left_active:
+    sfx_pop_bumper:
+      action: play
+  s_pop_bumper_right_active:
+    sfx_pop_bumper:
+      action: play
+  s_pop_bumper_top_active:
+    sfx_pop_bumper:
+      action: play
+  s_slingshot_left_active:
+    sfx_slingshot:
+      action: play
+  s_slingshot_right_active:
+    sfx_slingshot:
+      action: play
+  s_spinner_active:
+    sfx_spinner:
+      action: play
+  s_target_5_active:
+    sfx_target_hit:
+      action: play
+  s_target_6_active:
+    sfx_target_hit:
+      action: play
+  s_eight_ball_target_active:
+    sfx_target_hit:
+      action: play
+  s_lane_1_active:
+    sfx_rollover:
+      action: play
+  s_lane_2_active:
+    sfx_rollover:
+      action: play
+  s_lane_3_active:
+    sfx_rollover:
+      action: play
+  s_lane_4_active:
+    sfx_rollover:
+      action: play
+  s_return_lane_7_active:
+    sfx_rollover:
+      action: play
+
+# ---------------------------------------------------------------
+# BALL COLLECTION EVENT ROUTING
+# Switch -> named event per ball (per player parity)
+# Odd players (1 & 3): balls 1-8
+# Even players (2 & 4): balls 9-15 + 8
+# ---------------------------------------------------------------
+event_player:
+  # --- Lane 1 ---
+  s_lane_1_active{player.number==1 or player.number==3}:
+    - ball_1_collected_p_odd
+  s_lane_1_active{player.number==2 or player.number==4}:
+    - ball_9_collected_p_even
+
+  # --- Lane 2 ---
+  s_lane_2_active{player.number==1 or player.number==3}:
+    - ball_2_collected_p_odd
+  s_lane_2_active{player.number==2 or player.number==4}:
+    - ball_10_collected_p_even
+
+  # --- Lane 3 ---
+  s_lane_3_active{player.number==1 or player.number==3}:
+    - ball_3_collected_p_odd
+  s_lane_3_active{player.number==2 or player.number==4}:
+    - ball_11_collected_p_even
+
+  # --- Lane 4 ---
+  s_lane_4_active{player.number==1 or player.number==3}:
+    - ball_4_collected_p_odd
+  s_lane_4_active{player.number==2 or player.number==4}:
+    - ball_12_collected_p_even
+
+  # --- Stand-up target 5 ---
+  s_target_5_active{player.number==1 or player.number==3}:
+    - ball_5_collected_p_odd
+  s_target_5_active{player.number==2 or player.number==4}:
+    - ball_13_collected_p_even
+
+  # --- Stand-up target 6 ---
+  s_target_6_active{player.number==1 or player.number==3}:
+    - ball_6_collected_p_odd
+  s_target_6_active{player.number==2 or player.number==4}:
+    - ball_14_collected_p_even
+
+  # --- Return lane 7 ---
+  s_return_lane_7_active{player.number==1 or player.number==3}:
+    - ball_7_collected_p_odd
+  s_return_lane_7_active{player.number==2 or player.number==4}:
+    - ball_15_collected_p_even
+
+  # --- 8-ball pad: only collects when 1-7 all collected ---
+  s_eight_ball_target_active{player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.ball_5_collected and player.ball_6_collected and player.ball_7_collected}:
+    - ball_8_collected_ready
+
+  # --- Rack complete: fires when all 8 collected ---
+  ball_8_collected_ready{player.ball_1_collected and player.ball_2_collected and player.ball_3_collected and player.ball_4_collected and player.ball_5_collected and player.ball_6_collected and player.ball_7_collected}:
+    - eight_ball_rack_complete
+
+# ---------------------------------------------------------------
+# LED INSERTS - light on ball collected
+# ---------------------------------------------------------------
+light_player:
+  ball_1_collected_p_odd:
+    l_ball_1:
+      color: yellow
+  ball_2_collected_p_odd:
+    l_ball_2:
+      color: blue
+  ball_3_collected_p_odd:
+    l_ball_3:
+      color: red
+  ball_4_collected_p_odd:
+    l_ball_4:
+      color: purple
+  ball_5_collected_p_odd:
+    l_ball_5:
+      color: orange
+  ball_6_collected_p_odd:
+    l_ball_6:
+      color: green
+  ball_7_collected_p_odd:
+    l_ball_7:
+      color: maroon
+  ball_8_collected_ready:
+    l_ball_8:
+      color: "111111"
+
+  ball_9_collected_p_even:
+    l_ball_9:
+      color: yellow
+  ball_10_collected_p_even:
+    l_ball_10:
+      color: blue
+  ball_11_collected_p_even:
+    l_ball_11:
+      color: red
+  ball_12_collected_p_even:
+    l_ball_12:
+      color: purple
+  ball_13_collected_p_even:
+    l_ball_13:
+      color: orange
+  ball_14_collected_p_even:
+    l_ball_14:
+      color: green
+  ball_15_collected_p_even:
+    l_ball_15:
+      color: maroon
+
+  # Pop bumper LED flash on hit
+  s_pop_bumper_left_active:
+    l_pop_left:
+      color: white
+      fade: 200ms
+  s_pop_bumper_right_active:
+    l_pop_right:
+      color: white
+      fade: 200ms
+  s_pop_bumper_top_active:
+    l_pop_top:
+      color: white
+      fade: 200ms
