@@ -73,6 +73,23 @@ pip install mpf==0.57.4
 | K | Drain |
 | L | Tilt |
 
+### MPF Monitor (Interactive Playfield UI)
+
+MPF Monitor provides a graphical view of your playfield with clickable switches, lights, and coils — useful for visual play-testing without physical hardware.
+
+```bash
+# Install MPF Monitor (one time)
+.\.venv\Scripts\pip.exe install mpf-monitor
+
+# Terminal 1 — start MPF in virtual mode
+.\.venv\Scripts\python.exe -m mpf machine -x
+
+# Terminal 2 — start the monitor (connects to the running MPF instance)
+.\.venv\Scripts\python.exe -m mpfmonitor
+```
+
+> Both terminals must be running simultaneously. Start MPF first, then launch the monitor in a second terminal.
+
 ### Running Tests
 
 ```bash

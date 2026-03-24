@@ -93,7 +93,7 @@ Each of the 7 ball switches generates two named events (one per player parity). 
 
 ## ADR-005: Player Variable References in Event Conditions
 
-**Status:** Accepted
+**Status:** Superseded by ADR-017
 
 **Context:**  
 MPF provides multiple ways to reference the current player's variables. Two syntaxes appear similar but behave differently inside event condition strings:
@@ -108,6 +108,8 @@ Always use `player.variable_name` in event_player condition strings. Never use `
 - `skill_shot.yaml` had 7 occurrences of `current_player.ball` that caused skill shot conditions to silently fail on balls 2 and 3. All were fixed to `player.ball`.
 - This is a runtime silent failure — MPF does not log a warning; the condition simply never matches.
 - `machine.current_player` IS correct for display widget text interpolation (not conditions)
+
+> ⚠️ **ADR-005 was incorrect.** See ADR-017 for the corrected guidance. `current_player.` IS the correct syntax in MPF 0.57.4 event conditions. `player.` silently resolves to nothing.
 
 ---
 
@@ -406,24 +408,32 @@ Additionally, using `int: current_player.VAR + N` with the default `add` action 
 
 ---
 
-## ADR-019: MPF Test Framework Patches for Eight Ball Test Suite
+## ADR-019: Test File Adaptations for Stock MPF 0.57.4
 
-**Status:** Accepted
+**Status:** Accepted — supersedes earlier approach of patching `.venv/` MPF source
 
 **Context:**  
-MPF 0.57.4's `MpfTestCase` requires explicit `mock_event()` calls before `assertEventCalled()` can track an event. The Eight Ball test suite uses `assertEventCalled` without prior mocking. Additionally, `assertEventNotCalled` is used as a context manager (`with self.assertEventNotCalled(...):`), which MPF's implementation does not support. Finally, `hit_switch_and_run` does not release the switch after the time advance, so consecutive calls on the same switch are silently ignored as "duplicate switch state".
+MPF 0.57.4's `MpfTestCase` has three behaviors that differ from the test patterns originally used in the Eight Ball test suite:
+
+1. `assertEventCalled()` requires a prior `mock_event("event_name")` call — without it, the method raises "Event not mocked"
+2. `assertEventNotCalled()` does not support usage as a context manager (`with self.assertEventNotCalled(...):`); it is a plain assertion method
+3. `hit_switch_and_run(name, delta)` activates a switch and advances time but does **not** deactivate the switch. Calling it twice on the same switch is a no-op — the second call does nothing because the switch is already active.
+
+Additionally, `machine.game.players` does not exist in MPF 0.57.4; the correct attribute is `machine.game.player_list`.
 
 **Decision:**  
-Patch MPF's installed `MpfTestCase.py` with three minimal changes:
-1. **Auto-track all events**: patch `EventManager._process_event` at class level after machine initialisation to record every posted event in `self._events` automatically.
-2. **Relax `assertEventCalled`**: remove the "not mocked" guard so un-pre-mocked events are handled correctly.
-3. **`assertEventNotCalled` context manager**: convert the method to return a `_NotCalledCM` object that supports both plain-call and `with:` usage.
-4. **Auto-release playfield switches**: modify `hit_switch_and_run` to release switches tagged `playfield` after the time advance, enabling re-triggering of momentary switches (lanes, rollovers, targets, pop bumpers) in the same test.
+Fix the test file to use stock MPF APIs rather than patching MPF source (which is fragile and lost on venv rebuild):
 
-**Consequences:**  
-- All 25 tests pass without modifying the test file
-- The `.venv` patches are required whenever the venv is rebuilt (document in `requirements-dev.txt` or a post-install script)
-- The `Game.players` property was also added to the MPF `game.py` installation to alias `player_list`, required by `test_multi_player_game_flow`
+1. Add `self.mock_event("event_name")` before any sequence that should trigger the event being asserted
+2. Replace context-manager `with self.assertEventNotCalled(...):` with sequential `self.mock_event()` → action → `self.assertEventNotCalled()`
+3. Replace repeated `hit_switch_and_run` calls with `hit_and_release_switch(name)` + `advance_time_and_run(delta)` for all momentary playfield switches (lanes, targets, rollovers, pop bumpers, slingshots)
+4. Use `machine.game.player_list` instead of `machine.game.players`
+
+**Consequences:**
+- All 25 tests pass against unmodified stock MPF 0.57.4 — no `.venv/` patches required
+- The test file is portable: works on any fresh `pip install mpf==0.57.4` without post-install scripts
+- `hit_and_release_switch` properly simulates momentary switch activation (hit + release), allowing re-triggering
+- Only `s_trough_1` retains `hit_switch_and_run` since trough switches must stay active for ball tracking
 
 ---
 
