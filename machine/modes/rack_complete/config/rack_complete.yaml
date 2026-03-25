@@ -1,0 +1,72 @@
+#config_version=6
+
+# Rack Complete Mode
+# Fires when all 8 balls are collected in a rack.
+# Locks in 24,000 base bonus, resets ball tracking, increments rack counter.
+
+mode:
+  start_events: eight_ball_rack_complete
+  stop_events: rack_complete_done
+  priority: 300
+  game_mode: true
+
+slides:
+  rack_complete_slide:
+    widgets:
+      - type: text
+        text: RACK COMPLETE!
+        font_size: 36
+        y: 60%
+      - type: text
+        text: +24,000 BONUS LOCKED
+        font_size: 24
+        y: 40%
+
+slide_player:
+  mode_rack_complete_started: rack_complete_slide
+
+variable_player:
+  mode_rack_complete_started:
+    # Lock in 24,000 base bonus; accumulates per rack (ADD 24000)
+    base_bonus_locked:
+      int: 24000
+    rack_count:
+      int: 1
+    # Reset individual ball tracking for next rack (SET to 0)
+    ball_1_collected:
+      int: 0
+      action: set
+    ball_2_collected:
+      int: 0
+      action: set
+    ball_3_collected:
+      int: 0
+      action: set
+    ball_4_collected:
+      int: 0
+      action: set
+    ball_5_collected:
+      int: 0
+      action: set
+    ball_6_collected:
+      int: 0
+      action: set
+    ball_7_collected:
+      int: 0
+      action: set
+    balls_collected:
+      int: 0
+      action: set
+
+show_player:
+  mode_rack_complete_started: rack_complete_show
+
+sound_player:
+  mode_rack_complete_started:
+    sfx_rack_complete:
+      action: play
+
+# End mode after show completes (2 seconds)
+event_player:
+  mode_rack_complete_started:
+    - rack_complete_done|2s

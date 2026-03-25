@@ -19,11 +19,18 @@ This is NOT a restoration with original parts. This is a ground-up rebuild using
 ## Phase 1: MPF Project Setup & Virtual Environment
 
 ### 1.1 — Install MPF on Development PC
-- Install Python 3.14
+- Install **Python 3.12.x** — the most recent stable Python version supported by MPF 0.57.4
+  (`Requires-Python: >=3.8,<3.13`). Python 3.13+ is not supported; Python 3.14 does not yet exist.
+  > ⚠️ **The development machine currently has Python 3.9.13.** Per non-negotiable project
+  > constraints, the *most recent stable Python* supported by the current stable MPF must be used.
+  > Upgrade to Python 3.12.x, delete the existing `.venv`, and recreate it before proceeding.
 - Create a Python virtual environment for the project
-- Install MPF 0.80 (latest): `pip install mpf --pre`
-- Install MPF Monitor 0.57.2 for visual debugging
-- Install Godot Editor 4.6 + MPF-GMC 0.1.6 for media controller
+- Install **MPF 0.57.4** (latest stable release, released January 19, 2026):
+  `pip install mpf==0.57.4`
+  > Note: `pip install mpf --pre` installs the 0.80 **beta**, which is not yet stable. Do not use.
+- Install MPF Monitor (compatible with 0.57.4) for visual debugging
+- **Media controller:** Kivy MC is bundled with MPF 0.57.4 — no separate install needed.
+  Godot GMC is only used with MPF 0.80 (beta) and is not applicable here.
 
 ### 1.2 — Create Machine Folder Structure
 Create the MPF machine folder structure in this repository:
@@ -426,7 +433,7 @@ Purchase from [Marco Specialties](https://www.marcospecialties.com/control/main)
 | Playfield | [CPR](https://classicplayfields.com/shop/pinball-playfields/eightball-playfield/) | Reproduction Eight Ball playfield ($699) |
 | Electronics | [FAST Pinball](https://fastpinball.com/products/) | Neuron Controller, I/O Boards (3208, 1616, Cabinet), Expansion Boards (0071, 0081), Smart Power Filter, Smart Fuse Block, Audio Interface, RGB 7-Segment Displays, RGB Insert LEDs, Trough IR Board |
 | Mechanisms | [Marco Specialties](https://www.marcospecialties.com/control/main) | Flippers, pop bumpers, slingshots, kickback, spinner, targets, rollover switches, trough, plunger, rubber kit, posts, hardware |
-| Software | [Mission Pinball](https://missionpinball.org/latest/) | MPF 0.80 + MPF-GMC (Godot) — free & open source |
+| Software | [Mission Pinball](https://missionpinball.org/latest/) | MPF 0.57.4 + Kivy MC — free & open source |
 | Chimebox | eBay / pinball swap meets | Original Bally chimebox unit |
 | Host Computer | Various | Raspberry Pi 5 (mounts on Neuron) for final machine; dev PC for development |
 
@@ -439,7 +446,14 @@ Purchase from [Marco Specialties](https://www.marcospecialties.com/control/main)
 - **CPR Playfield is currently out of stock** — join the waitlist early; they may do another run if demand exists.
 - **FAST Neuron + Raspberry Pi 5** is the recommended combination for the final machine. The Pi seats directly into the Neuron for power, fan control, and soft shutdown.
 - **Chimebox coils** need 25-50V pulse power — verify the 48V supply and FAST driver output can handle the chime coil specs (check coil resistance).
-- **MPF 0.80** is the latest version using Godot-based media controller (GMC).
+- **MPF version:** MPF 0.57.4 is the latest stable release (released January 19, 2026). MPF 0.80
+  remains in beta and is not production-ready. The media controller for 0.57.4 is Kivy MC (bundled).
+  When MPF 0.80 reaches stable status, an upgrade will require Python 3.10+ and a config migration
+  review. Monitor [missionpinball.org](https://missionpinball.org) for release announcements.
+- **Non-negotiable version constraints:** Per project policy, the latest stable MPF and the most
+  recent stable Python it supports are always required. As of January 2026 this means MPF 0.57.4
+  and Python 3.12.x. The dev machine has Python 3.9.13 — upgrade to 3.12.x before the next
+  virtual environment rebuild.
 - **The 7-ball problem:** The #7 ball (right return lane) cannot be reliably aimed for — this is by design. The MPF config faithfully replicates this.
 - **Even/odd player ball numbering:** Players 1&3 use balls 1-8, players 2&4 use balls 9-15 + 8-ball. MPF player variables handle this per-player.
 - **MPF Monitor** is invaluable during development — it shows real-time switch states, device states, player variables, events, and more in a visual GUI.

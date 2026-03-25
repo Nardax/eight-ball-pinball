@@ -1,0 +1,12 @@
+#config_version=6
+
+# Eight Ball Pinball — Display Configuration
+# Virtual: simulated window. Hardware: FAST RGB 7-segment displays.
+
+displays:
+  window:
+    width: 800
+    height: 600
+
+# Score display slides are defined in slides/ directory.
+# Using text widgets to simulate 7-segment style scoring.

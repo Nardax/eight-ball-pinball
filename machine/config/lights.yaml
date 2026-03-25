@@ -1,0 +1,166 @@
+#config_version=6
+
+# Eight Ball Pinball — LED / Light Definitions
+# All RGB LEDs. Physical FAST LED addresses added in Phase 6.
+
+lights:
+  # --- Pool ball inserts (players 1 & 3 use balls 1-8) ---
+  l_ball_1:
+    label: Ball 1 Insert
+    number:
+    tags: ball_insert
+
+  l_ball_2:
+    label: Ball 2 Insert
+    number:
+    tags: ball_insert
+
+  l_ball_3:
+    label: Ball 3 Insert
+    number:
+    tags: ball_insert
+
+  l_ball_4:
+    label: Ball 4 Insert
+    number:
+    tags: ball_insert
+
+  l_ball_5:
+    label: Ball 5 Insert
+    number:
+    tags: ball_insert
+
+  l_ball_6:
+    label: Ball 6 Insert
+    number:
+    tags: ball_insert
+
+  l_ball_7:
+    label: Ball 7 Insert
+    number:
+    tags: ball_insert
+
+  l_ball_8:
+    label: Ball 8 Insert
+    number:
+    tags: ball_insert
+
+  # Pool ball inserts (players 2 & 4 use balls 9-15 + 8)
+  # Same physical LEDs aliased via tags — controlled by player variable
+  l_ball_9:
+    label: Ball 9 Insert (same LED as ball 1 for even players)
+    number:
+    tags: ball_insert_even
+
+  l_ball_10:
+    label: Ball 10 Insert
+    number:
+    tags: ball_insert_even
+
+  l_ball_11:
+    label: Ball 11 Insert
+    number:
+    tags: ball_insert_even
+
+  l_ball_12:
+    label: Ball 12 Insert
+    number:
+    tags: ball_insert_even
+
+  l_ball_13:
+    label: Ball 13 Insert
+    number:
+    tags: ball_insert_even
+
+  l_ball_14:
+    label: Ball 14 Insert
+    number:
+    tags: ball_insert_even
+
+  l_ball_15:
+    label: Ball 15 Insert
+    number:
+    tags: ball_insert_even
+
+  # --- Kickback indicator ---
+  l_kickback:
+    label: Kickback Lit Indicator
+    number:
+    tags: kickback_indicator
+
+  # --- Spinner indicator ---
+  l_spinner_lit:
+    label: Spinner Lit Indicator
+    number:
+    tags: spinner_indicator
+
+  # --- Bonus multiplier indicators ---
+  l_mult_2x:
+    label: 2X Multiplier Indicator
+    number:
+    tags: multiplier
+
+  l_mult_3x:
+    label: 3X Multiplier Indicator
+    number:
+    tags: multiplier
+
+  l_mult_5x:
+    label: 5X Multiplier Indicator
+    number:
+    tags: multiplier
+
+  # --- Extra ball indicator ---
+  l_extra_ball:
+    label: Extra Ball Indicator
+    number:
+    tags: extra_ball
+
+  # --- Candy cane value indicators ---
+  l_candy_1:
+    label: Candy Cane Value Level 1
+    number:
+    tags: candy_cane
+
+  l_candy_2:
+    label: Candy Cane Value Level 2
+    number:
+    tags: candy_cane
+
+  # --- Top lane lit indicators (for multiplier advance) ---
+  l_lane_2_lit:
+    label: Lane 2 Lit (multiplier advance)
+    number:
+    tags: lane_advance
+
+  l_lane_3_lit:
+    label: Lane 3 Lit (multiplier advance)
+    number:
+    tags: lane_advance
+
+  # --- Pop bumper LEDs ---
+  l_pop_left:
+    label: Left Pop Bumper LED
+    number:
+    tags: pop_bumper_led
+
+  l_pop_right:
+    label: Right Pop Bumper LED
+    number:
+    tags: pop_bumper_led
+
+  l_pop_top:
+    label: Top Pop Bumper LED
+    number:
+    tags: pop_bumper_led
+
+  # --- General illumination (GI) ---
+  l_gi_playfield:
+    label: GI Playfield (LED strip group)
+    number:
+    tags: gi
+
+  l_gi_backbox:
+    label: GI Backbox (LED strip group)
+    number:
+    tags: gi

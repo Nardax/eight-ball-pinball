@@ -1,0 +1,143 @@
+#config_version=6
+
+# Eight Ball Pinball — Main Machine Config
+# Bally Eight Ball (1977) rebuild using FAST Pinball Neuron + MPF
+#
+# DEVELOPMENT: platform: virtual — no hardware needed
+# HARDWARE:    platform: fast   — one-line swap when hardware is connected
+
+machine:
+  balls_installed: 1
+  min_balls: 1
+
+hardware:
+  platform: virtual
+  driverboards: virtual
+
+game:
+  balls_per_game: 3
+  max_players: 4
+
+# Include all config sub-files
+config:
+  - switches.yaml
+  - coils.yaml
+  - lights.yaml
+  - displays.yaml
+  - sound.yaml
+
+modes:
+  - attract
+  - base
+  - skill_shot
+  - bonus
+  - rack_complete
+  - kickback
+  - bonus_mult
+
+# Ball devices
+ball_devices:
+  bd_trough:
+    ball_switches: s_trough_1
+    eject_coil: c_trough_eject
+    tags: home, trough
+    eject_targets: bd_plunger
+    confirm_eject_switch: s_plunger_lane
+
+  bd_plunger:
+    ball_switches: s_plunger_lane
+    mechanical_eject: true
+    eject_timeouts: 3s
+    tags: plunger
+
+playfields:
+  playfield:
+    default_source_device: bd_trough
+    tags: default
+
+# Flipper hardware rules (instant response)
+flippers:
+  left_flipper:
+    main_coil: c_flipper_left
+    activation_switch: s_flipper_left
+    enable_events: ball_started
+    disable_events: ball_ended
+
+  right_flipper:
+    main_coil: c_flipper_right
+    activation_switch: s_flipper_right
+    enable_events: ball_started
+    disable_events: ball_ended
+
+# Autofire coils (switch → coil, no software delay)
+autofire_coils:
+  pop_bumper_left:
+    coil: c_pop_bumper_left
+    switch: s_pop_bumper_left
+
+  pop_bumper_right:
+    coil: c_pop_bumper_right
+    switch: s_pop_bumper_right
+
+  pop_bumper_top:
+    coil: c_pop_bumper_top
+    switch: s_pop_bumper_top
+
+  slingshot_left:
+    coil: c_slingshot_left
+    switch: s_slingshot_left
+
+  slingshot_right:
+    coil: c_slingshot_right
+    switch: s_slingshot_right
+
+# Player variables (per-player state)
+player_vars:
+  balls_collected:
+    value_type: int
+    initial_value: 0
+
+  balls_9_to_15_collected:
+    value_type: int
+    initial_value: 0
+
+  rack_count:
+    value_type: int
+    initial_value: 0
+
+  base_bonus_locked:
+    value_type: int
+    initial_value: 0
+
+  bonus_multiplier:
+    value_type: int
+    initial_value: 1
+
+  star_hits:
+    value_type: int
+    initial_value: 0
+
+  kickback_active:
+    value_type: int
+    initial_value: 0
+
+  spinner_lit:
+    value_type: int
+    initial_value: 0
+
+  ball_1_collected:  {value_type: int, initial_value: 0}
+  ball_2_collected:  {value_type: int, initial_value: 0}
+  ball_3_collected:  {value_type: int, initial_value: 0}
+  ball_4_collected:  {value_type: int, initial_value: 0}
+  ball_5_collected:  {value_type: int, initial_value: 0}
+  ball_6_collected:  {value_type: int, initial_value: 0}
+  ball_7_collected:  {value_type: int, initial_value: 0}
+  ball_8_collected:  {value_type: int, initial_value: 0}
+
+  # Tracks which of lane 2 or lane 3 is lit for multiplier advance
+  lit_advance_lane:
+    value_type: int
+    initial_value: 2
+
+# Tilt is configured via MPF's built-in tilt plugin
+# tilt switch and slam_tilt are defined in switches.yaml
