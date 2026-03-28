@@ -22,8 +22,10 @@ All game logic is built and tested in MPF's **virtual platform** before any hard
 
 ### Requirements
 
-- **Python 3.8–3.12** — required for MPF 0.57.4 (`Requires-Python: >=3.8,<3.13`)
+- **Python 3.9–3.12** — required for MPF 0.57.4 (`Requires-Python: >=3.8,<3.13`; 3.9+ recommended on Windows for audio support)
 - **MPF 0.57.4** — installed in `.venv`
+- **MPF Monitor 0.57.2** — optional graphical playfield UI (requires PyQt6)
+- **Pillow 10.4.0** — required by MPF Monitor (see [Pillow version conflict](#pillow-version-conflict) below)
 
 > **Note on MPF versions:** The original plan targeted MPF 0.80, which requires Python 3.10+
 > and uses the Godot GMC media controller. This repo uses MPF 0.57.4 (supports Python 3.8–3.12,
@@ -38,19 +40,62 @@ python -m venv .venv
 .\.venv\Scripts\activate      # Windows
 source .venv/bin/activate     # Mac/Linux
 
-# Install MPF 0.57.4 (Python 3.8–3.12)
+# Install MPF 0.57.4
 pip install mpf==0.57.4
+
+# Install MPF Monitor (graphical playfield UI)
+pip install mpf-monitor
+
+# Fix the Pillow version conflict (see note below)
+pip install Pillow==10.4.0
 
 # To use MPF 0.80 instead (requires Python 3.10+):
 # pip install mpf --pre
 ```
 
+#### Pillow Version Conflict
+
+MPF 0.57.4 pins `Pillow==9.5.0` (exact match), but MPF Monitor 0.57.2 requires `Pillow>=10.4.0`.
+These constraints are mutually exclusive. The fix is to install `Pillow==10.4.0` and then relax
+MPF's metadata so `pkg_resources` doesn't reject the version at runtime:
+
+```bash
+# After installing all packages, patch MPF's metadata to accept Pillow 10.4.0:
+# Find the METADATA file (adjust path for your OS):
+#   Windows: .venv\Lib\site-packages\mpf-0.57.4.dist-info\METADATA
+#   Linux/Mac: .venv/lib/python3.X/site-packages/mpf-0.57.4.dist-info/METADATA
+#
+# Change this line:
+#   Requires-Dist: Pillow==9.5.0
+# To:
+#   Requires-Dist: Pillow>=9.5.0
+```
+
+On Windows, you can do this from the repo root with PowerShell:
+
+```powershell
+(Get-Content .\.venv\Lib\site-packages\mpf-0.57.4.dist-info\METADATA) -replace 'Requires-Dist: Pillow==9\.5\.0', 'Requires-Dist: Pillow>=9.5.0' | Set-Content .\.venv\Lib\site-packages\mpf-0.57.4.dist-info\METADATA
+```
+
+> **⚠️ This patch must be re-applied any time MPF is reinstalled or upgraded.**
+> MPF works correctly with Pillow 10.4.0 in virtual mode — the `==9.5.0` pin is an upstream
+> packaging issue between `mpf` and `mpf-monitor`.
+
 ### Running MPF in Virtual Mode
 
 ```bash
-# From the repo root:
-.\.venv\Scripts\python.exe -m mpf machine -x
+# From the repo root (smart virtual simulates ball movement):
+.\.venv\Scripts\python.exe -m mpf machine -X -b
 ```
+
+> **Flag reference:**
+> - **`-X`** (uppercase) — enables the **smart virtual** platform, which simulates balls moving
+>   through trough, plunger, and drain devices automatically. Lowercase `-x` is the basic
+>   virtual platform where switches are completely manual — the trough won't have balls,
+>   so the game can't start unless you manually toggle every switch yourself.
+> - **`-b`** — skips the outbound BCP connection to the Media Controller (MPF-MC), which we
+>   don't use. Without `-b`, MPF blocks waiting for a connection on port 5050. The BCP
+>   **server** on port 5051 still starts regardless of `-b`, so the MPF Monitor can connect.
 
 ### Keyboard Controls (Virtual Play-Testing)
 
@@ -75,20 +120,24 @@ pip install mpf==0.57.4
 
 ### MPF Monitor (Interactive Playfield UI)
 
-MPF Monitor provides a graphical view of your playfield with clickable switches, lights, and coils — useful for visual play-testing without physical hardware.
+MPF Monitor provides a graphical view of your playfield with clickable switches, lights, and coils — useful for visual play-testing without physical hardware. It connects to a running MPF instance via BCP (Backbox Control Protocol).
+
+> **Prerequisites:** MPF Monitor must be installed and the [Pillow version conflict](#pillow-version-conflict) resolved before first use. See [Setup](#setup) above.
 
 ```bash
-# Install MPF Monitor (one time)
-.\.venv\Scripts\pip.exe install mpf-monitor
+# Terminal 1 — start MPF in smart virtual mode (from the repo root)
+.\.venv\Scripts\python.exe -m mpf machine -X -b
 
-# Terminal 1 — start MPF in virtual mode
-.\.venv\Scripts\python.exe -m mpf machine -x
-
-# Terminal 2 — start the monitor (connects to the running MPF instance)
-.\.venv\Scripts\python.exe -m mpfmonitor
+# Terminal 2 — start the monitor (also from the repo root)
+.\.venv\Scripts\python.exe -m mpf monitor machine
 ```
 
-> Both terminals must be running simultaneously. Start MPF first, then launch the monitor in a second terminal.
+> **Important:** Both terminals must be running simultaneously. Start MPF first, then launch
+> the monitor in a second terminal. Both commands must be run from the **repo root**
+> (`eight-ball-pinball/`), not from inside the `machine/` folder. The `machine` argument
+> tells MPF where to find the config — without it, MPF looks in the current directory and fails.
+> The `-b` flag only disables the outbound MC connection; the BCP server on port 5051 still
+> starts and the monitor connects to it.
 
 ### Running Tests
 

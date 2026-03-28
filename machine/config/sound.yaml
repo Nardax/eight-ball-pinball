@@ -8,7 +8,6 @@ sound_system:
   buffer: 512
   frequency: 44100
   channels: 2
-  master_volume: 0.8
   tracks:
     music:
       volume: 0.5
@@ -22,76 +21,79 @@ sound_system:
 sound_player:
   # Scored events
   score_1000:
-    sounds: sfx_chime_high
+    sfx_chime_high:
+      action: play
   score_100:
-    sounds: sfx_chime_mid
+    sfx_chime_mid:
+      action: play
   score_10:
-    sounds: sfx_chime_low
+    sfx_chime_low:
+      action: play
 
 sounds:
   sfx_spinner:
-    file: sounds/spinner_tick.wav
+    file: sfx_spinner.wav
     track: sfx
     volume: 0.7
     max_queue_time: 0s
 
   sfx_pop_bumper:
-    file: sounds/pop_bumper.wav
+    file: sfx_pop_bumper.wav
     track: sfx
     volume: 0.8
 
   sfx_slingshot:
-    file: sounds/slingshot.wav
+    file: sfx_slingshot.wav
     track: sfx
     volume: 0.7
 
   sfx_target_hit:
-    file: sounds/target_hit.wav
+    file: sfx_target_hit.wav
     track: sfx
     volume: 0.8
 
   sfx_rollover:
-    file: sounds/rollover.wav
+    file: sfx_rollover.wav
     track: sfx
     volume: 0.6
 
   sfx_drain:
-    file: sounds/ball_drain.wav
+    file: sfx_drain.wav
     track: sfx
     volume: 1.0
 
   sfx_bonus_count:
-    file: sounds/bonus_count.wav
+    file: sfx_bonus_count.wav
     track: sfx
     volume: 0.8
 
   sfx_extra_ball:
-    file: sounds/extra_ball.wav
+    file: sfx_extra_ball.wav
     track: sfx
     volume: 1.0
 
   sfx_rack_complete:
-    file: sounds/rack_complete.wav
+    file: sfx_rack_complete.wav
     track: sfx
     volume: 1.0
 
   sfx_chime_high:
-    file: sounds/chime_high.wav
+    file: sfx_chime_high.wav
     track: sfx
     volume: 0.9
 
   sfx_chime_mid:
-    file: sounds/chime_mid.wav
+    file: sfx_chime_mid.wav
     track: sfx
     volume: 0.9
 
   sfx_chime_low:
-    file: sounds/chime_low.wav
+    file: sfx_chime_low.wav
     track: sfx
     volume: 0.9
 
   music_attract:
-    file: sounds/music_attract.wav
+    file: music_attract.wav
     track: music
     volume: 0.6
     loops: -1

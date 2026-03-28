@@ -1,0 +1,54 @@
+2026-03-27 21:22:35,380 : kivy : deps: Successfully imported "kivy_deps.gstreamer" 0.3.3
+2026-03-27 21:22:35,382 : kivy : deps: Successfully imported "kivy_deps.angle" 0.3.3
+2026-03-27 21:22:35,382 : kivy : deps: Successfully imported "kivy_deps.glew" 0.3.1
+2026-03-27 21:22:35,383 : kivy : deps: Successfully imported "kivy_deps.sdl2" 0.6.0
+2026-03-27 21:22:35,383 : kivy : Kivy: v2.2.1
+2026-03-27 21:22:35,383 : kivy : Kivy: Installed at "C:\repos\nardax\eight-ball-pinball\.venv\Lib\site-packages\kivy\__init__.py"
+2026-03-27 21:22:35,383 : kivy : Python: v3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]
+2026-03-27 21:22:35,383 : kivy : Python: Interpreter at "C:\repos\nardax\eight-ball-pinball\.venv\Scripts\python.exe"
+2026-03-27 21:22:35,528 : kivy : Factory: 190 symbols loaded
+2026-03-27 21:22:40,460 : kivy : ImageLoaderFFPy: Using ffpyplayer 4.5.1
+2026-03-27 21:22:40,461 : kivy : Image: Providers: img_tex, img_dds, img_sdl2, img_pil, img_ffpyplayer 
+2026-03-27 21:22:42,786 : kivy : VideoGstplayer: Using Gstreamer 1.18.5.0
+2026-03-27 21:22:42,787 : kivy : Video: Provider: gstplayer
+2026-03-27 21:22:43,726 : root : Loading MPF-MC controller
+2026-03-27 21:22:43,738 : YamlMultifileConfigLoader : Machine config file #1: config
+2026-03-27 21:22:43,752 : ConfigProcessor : Config file in cache changed: C:\repos\nardax\eight-ball-pinball\machine\config\config
+2026-03-27 21:22:43,753 : ConfigProcessor : Loading config from file C:\repos\nardax\eight-ball-pinball\.venv\Lib\site-packages\mpfmc\mcconfig.yaml.
+2026-03-27 21:22:43,812 : ConfigProcessor : Loading config: C:\repos\nardax\eight-ball-pinball\.venv\Lib\site-packages\mpfmc\mcconfig.yaml
+2026-03-27 21:22:43,813 : ConfigProcessor : Loading config from file C:\repos\nardax\eight-ball-pinball\machine\config\config.
+2026-03-27 21:22:43,856 : ConfigProcessor : Loading config: C:\repos\nardax\eight-ball-pinball\machine\config\config
+2026-03-27 21:22:43,895 : ConfigProcessor : Loading config: C:\repos\nardax\eight-ball-pinball\machine\config\switches.yaml
+2026-03-27 21:22:43,936 : ConfigProcessor : Loading config: C:\repos\nardax\eight-ball-pinball\machine\config\coils.yaml
+2026-03-27 21:22:43,986 : ConfigProcessor : Loading config: C:\repos\nardax\eight-ball-pinball\machine\config\lights.yaml
+2026-03-27 21:22:44,023 : ConfigProcessor : Loading config: C:\repos\nardax\eight-ball-pinball\machine\config\displays.yaml
+2026-03-27 21:22:44,068 : ConfigProcessor : Loading config: C:\repos\nardax\eight-ball-pinball\machine\config\sound.yaml
+2026-03-27 21:22:44,081 : ConfigProcessor : Config file cache created: C:\Users\ryanpe\AppData\Local\Temp\545c8e5e67cae845c865a3a137ddf86b.mpf_cache
+2026-03-27 21:22:44,084 : ConfigProcessor : Loading config from cache: C:\Users\ryanpe\AppData\Local\Temp\c4ff466212d65cae8bfb899a586f3cbb.mpf_cache
+2026-03-27 21:22:44,088 : ConfigProcessor : Loading config from cache: C:\Users\ryanpe\AppData\Local\Temp\ffb86be57ef024386544c00e47ccaf75.mpf_cache
+2026-03-27 21:22:44,092 : ConfigProcessor : Loading config from cache: C:\Users\ryanpe\AppData\Local\Temp\c4ff466212d65cae8bfb899a586f3cbb.mpf_cache
+2026-03-27 21:22:44,096 : ConfigProcessor : Loading config from cache: C:\Users\ryanpe\AppData\Local\Temp\f1d43171c285ddde10d08443013372cf.mpf_cache
+2026-03-27 21:22:44,099 : ConfigProcessor : Loading config from cache: C:\Users\ryanpe\AppData\Local\Temp\9d65ef0a9a1a98c94c5e5681106fdfff.mpf_cache
+2026-03-27 21:22:44,102 : ConfigProcessor : Loading config from cache: C:\Users\ryanpe\AppData\Local\Temp\8a3f26d803726d0369baae77fb996d83.mpf_cache
+2026-03-27 21:22:44,107 : ConfigProcessor : Loading config from cache: C:\Users\ryanpe\AppData\Local\Temp\6b4d68095f8d2549a6f090e8b04904d2.mpf_cache
+2026-03-27 21:22:44,110 : ConfigProcessor : Loading config from cache: C:\Users\ryanpe\AppData\Local\Temp\72db3bca94b2b5e81c9e15f49167beba.mpf_cache
+2026-03-27 21:22:44,114 : ConfigProcessor : Loading config from cache: C:\Users\ryanpe\AppData\Local\Temp\d1379fbfecaf7c52b57dd33bcaa93abd.mpf_cache
+2026-03-27 21:22:44,118 : mpfmc : Mission Pinball Framework Media Controller (MPF-MC) v0.57.1. Requires MPF v0.57.0 or newer.
+2026-03-27 21:22:44,119 : mpfmc : Found MPF v0.57.4
+2026-03-27 21:22:44,119 : mpfmc : Machine path: C:\repos\nardax\eight-ball-pinball\machine
+2026-03-27 21:22:44,119 : mpfmc : Starting clock at 60.0Hz
+2026-03-27 21:22:44,804 : kivy : Text: Provider: sdl2
+2026-03-27 21:22:45,333 : kivy : Window: Provider: sdl2
+2026-03-27 21:22:49,428 : kivy : GL: Using the "OpenGL" graphics system
+2026-03-27 21:22:49,466 : kivy : GL: GLEW initialization succeeded
+2026-03-27 21:22:49,469 : kivy : GL: Backend used <glew>
+2026-03-27 21:22:49,469 : kivy : GL: OpenGL version <b'4.6.0 - Build 32.0.101.6737'>
+2026-03-27 21:22:49,470 : kivy : GL: OpenGL vendor <b'Intel'>
+2026-03-27 21:22:49,470 : kivy : GL: OpenGL renderer <b'Intel(R) Arc(TM) Graphics'>
+2026-03-27 21:22:49,470 : kivy : GL: OpenGL parsed version: 4, 6
+2026-03-27 21:22:49,470 : kivy : GL: Shading version <b'4.60 - Build 32.0.101.6737'>
+2026-03-27 21:22:49,472 : kivy : GL: Texture max size <16384>
+2026-03-27 21:22:49,472 : kivy : GL: Texture max units <32>
+2026-03-27 21:22:49,735 : kivy : Window: auto add sdl2 input provider
+2026-03-27 21:22:49,737 : kivy : Window: virtual keyboard not allowed, single mode, not docked
+2026-03-27 21:22:49,820 : AudioInterface : NOTE: You may experience noise and other undesirable sound artifacts when you set your buffer at 1024 or smaller.

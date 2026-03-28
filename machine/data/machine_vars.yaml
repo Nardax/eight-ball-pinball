@@ -1,0 +1,8 @@
+free_play:
+  expire: null
+  expire_secs: null
+  value: true
+master_volume:
+  expire: null
+  expire_secs: null
+  value: 0.5

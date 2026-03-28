@@ -14,6 +14,11 @@ hardware:
   platform: virtual
   driverboards: virtual
 
+# Smart virtual: auto-plunge balls from mechanical plunger after timeout
+smart_virtual:
+  simulate_manual_plunger: true
+  simulate_manual_plunger_timeout: 2s
+
 game:
   balls_per_game: 3
   max_players: 4
@@ -25,9 +30,11 @@ config:
   - lights.yaml
   - displays.yaml
   - sound.yaml
+  - ../keyboard.yaml
 
 modes:
   - attract
+  - credits
   - base
   - skill_shot
   - bonus
@@ -141,3 +148,7 @@ player_vars:
 
 # Tilt is configured via MPF's built-in tilt plugin
 # tilt switch and slam_tilt are defined in switches.yaml
+
+# Credits — free play for development; no coin needed to start
+credits:
+  free_play: true

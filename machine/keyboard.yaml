@@ -78,3 +78,8 @@ keyboard:
   l:
     switch: s_tilt
     toggle: false
+
+  # --- Trough (toggle to simulate ball sitting on switch) ---
+  "0":
+    switch: s_trough_1
+    toggle: true
