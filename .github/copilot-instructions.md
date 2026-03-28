@@ -12,13 +12,18 @@ The latest and greatest stable version of MFP must be used at all times.
 [Non Negotiable]
 The system should be built using the most recent stable version of Python that is supported by the most recent stable version of MFP.
 
+Use the configuration documentation as a resource for understanding how to set up and configure the MPF machine. The documentation provides detailed instructions on how to create and manage the configuration files necessary for running the pinball machine simulation. It covers topics such as defining game modes, setting up player variables, and configuring event handling. Refer to the documentation to ensure that your configuration files are correctly structured and that you are utilizing the features of MPF effectively to create an engaging pinball machine experience. 
+
+Read the manual - Don't guess. The manual is your friend. It contains a wealth of information about the features and capabilities of MPF, as well as best practices for configuring and running your pinball machine simulation. By familiarizing yourself with the manual, you can gain a deeper understanding of how MPF works and how to leverage its features to create a more immersive and enjoyable pinball experience.
+https://missionpinball.org/latest/reference/
+
 ---
 
 ## Commands
 
 ```bash
 # Run MPF in virtual mode (simulated hardware — no physical machine needed)
-.\.venv\Scripts\python.exe -m mpf machine -x
+.\.venv\Scripts\python.exe -m mpf machine -X
 
 # Run all tests
 .\.venv\Scripts\python.exe -m pytest machine/tests/test_eight_ball.py -v
@@ -27,7 +32,7 @@ The system should be built using the most recent stable version of Python that i
 .\.venv\Scripts\python.exe -m pytest machine/tests/test_eight_ball.py::TestEightBall::test_rack_completion_all_8_balls -v
 
 # Validate config loads without errors (run 15s then kill)
-.\.venv\Scripts\python.exe -m mpf machine -x -t
+.\.venv\Scripts\python.exe -m mpf machine -X -t
 
 # Syntax-check the test file
 .\.venv\Scripts\python.exe -m py_compile machine/tests/test_eight_ball.py
