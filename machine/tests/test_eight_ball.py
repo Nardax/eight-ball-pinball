@@ -514,3 +514,97 @@ class TestEightBall(MpfTestCase):
         self.hit_and_release_switch("s_lane_1")
         self.advance_time_and_run(0.1)
         self.assertEqual(self.machine.game.player["lit_advance_lane"], 2)
+
+    # ------------------------------------------------------------------
+    # Lane Change: completing all 4 top lanes fires completion & scores
+    # ------------------------------------------------------------------
+    def test_lane_change_rotation(self):
+        self._start_game()
+        self.assertModeRunning("lane_change")
+        # End skill shot to get clean scoring
+        self.hit_and_release_switch("s_pop_bumper_left")
+        self.advance_time_and_run(0.1)
+        self.mock_event("top_lanes_lit_complete")
+        initial_score = self.machine.game.player.score
+        for switch in ["s_lane_1", "s_lane_2", "s_lane_3", "s_lane_4"]:
+            self.hit_and_release_switch(switch)
+            self.advance_time_and_run(0.1)
+        self.assertEventCalled("top_lanes_lit_complete")
+        # 4 x 3000 (ball collection) + 10000 (completion bonus)
+        self.assertEqual(self.machine.game.player.score, initial_score + 22000)
+
+    # ------------------------------------------------------------------
+    # Lane Change: flipper rotation shifts lit shots
+    # ------------------------------------------------------------------
+    def test_lane_change_flipper_rotation(self):
+        self._start_game()
+        self.assertModeRunning("lane_change")
+        # Hit lane 1 to advance its shot from unlit to lit
+        self.hit_and_release_switch("s_lane_1")
+        self.advance_time_and_run(0.1)
+        # Hit right flipper to rotate the shot group
+        self.hit_and_release_switch("s_flipper_right")
+        self.advance_time_and_run(0.1)
+        # Mode still running and shot group present after rotation
+        self.assertModeRunning("lane_change")
+        self.assertIn("top_lanes", self.machine.shot_groups)
+
+    # ------------------------------------------------------------------
+    # Pop Bumper Counter: 1000 bonus every 10 hits
+    # ------------------------------------------------------------------
+    def test_pop_bumper_counter_bonus(self):
+        self._start_game()
+        initial_score = self.machine.game.player.score
+        self.mock_event("pop_bumper_bonus")
+        for i in range(10):
+            switch = ["s_pop_bumper_left", "s_pop_bumper_right",
+                      "s_pop_bumper_top"][i % 3]
+            self.hit_and_release_switch(switch)
+            self.advance_time_and_run(0.1)
+        self.assertEventCalled("pop_bumper_bonus")
+        # 10 x 100 (per hit) + 1000 (bonus) = 2000
+        self.assertEqual(self.machine.game.player.score, initial_score + 2000)
+
+    # ------------------------------------------------------------------
+    # Pop Bumper Counter: resets after each bonus cycle
+    # ------------------------------------------------------------------
+    def test_pop_bumper_counter_resets_after_bonus(self):
+        self._start_game()
+        self.mock_event("pop_bumper_bonus")
+        for i in range(10):
+            switch = ["s_pop_bumper_left", "s_pop_bumper_right",
+                      "s_pop_bumper_top"][i % 3]
+            self.hit_and_release_switch(switch)
+            self.advance_time_and_run(0.1)
+        self.assertEventCalled("pop_bumper_bonus")
+        # Reset mock for fresh tracking
+        self.mock_event("pop_bumper_bonus")
+        # Next 9 hits should NOT trigger bonus yet
+        for i in range(9):
+            switch = ["s_pop_bumper_left", "s_pop_bumper_right",
+                      "s_pop_bumper_top"][i % 3]
+            self.hit_and_release_switch(switch)
+            self.advance_time_and_run(0.1)
+        self.assertEventNotCalled("pop_bumper_bonus")
+        # 10th hit since last bonus triggers again
+        self.hit_and_release_switch("s_pop_bumper_left")
+        self.advance_time_and_run(0.1)
+        self.assertEventCalled("pop_bumper_bonus")
+
+    # ------------------------------------------------------------------
+    # Tilt mode: active during gameplay
+    # ------------------------------------------------------------------
+    def test_tilt_mode_running(self):
+        self._start_game()
+        self.assertModeRunning("tilt")
+
+    # ------------------------------------------------------------------
+    # Game over: draining all 3 balls ends the game
+    # ------------------------------------------------------------------
+    def test_game_over_basic(self):
+        self._start_game()
+        self.assertIsNotNone(self.machine.game)
+        self._drain_ball()  # ball 1
+        self._drain_ball()  # ball 2
+        self._drain_ball()  # ball 3
+        self.assertIsNone(self.machine.game)
