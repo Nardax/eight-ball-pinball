@@ -126,7 +126,7 @@ MPF Monitor provides a graphical view of your playfield with clickable switches,
 
 ```bash
 # Terminal 1 — start MPF in smart virtual mode (from the repo root)
-.\.venv\Scripts\python.exe -m mpf machine -X -b
+.\.venv\Scripts\python.exe -m mpf both machine -X
 
 # Terminal 2 — start the monitor (also from the repo root)
 .\.venv\Scripts\python.exe -m mpf monitor machine
