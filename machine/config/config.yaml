@@ -19,6 +19,10 @@ smart_virtual:
   simulate_manual_plunger: true
   simulate_manual_plunger_timeout: 2s
 
+# Virtual mode: simulate a ball resting on trough switch at startup
+virtual_platform_start_active_switches:
+  - s_trough_1
+
 game:
   balls_per_game: 3
   max_players: 4
