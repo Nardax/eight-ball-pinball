@@ -28,11 +28,69 @@ slides:
               duration: 0.6
               repeat: true
 
+  attract_title_slide:
+    widgets:
+      - type: text
+        text: "EIGHT BALL"
+        font_size: 80
+        color: red
+      - type: text
+        text: "PINBALL"
+        font_size: 60
+        color: white
+        y: 30%
+
+  attract_press_start_slide:
+    widgets:
+      - type: text
+        text: "PRESS START"
+        font_size: 70
+        color: yellow
+
+  attract_rules_slide:
+    widgets:
+      - type: text
+        text: "COLLECT ALL 8 BALLS"
+        font_size: 50
+        color: white
+      - type: text
+        text: "TO COMPLETE A RACK"
+        font_size: 40
+        color: green
+        y: 35%
+
+  attract_last_score_slide:
+    widgets:
+      - type: text
+        text: "LAST GAME"
+        font_size: 50
+        y: 60%
+      - type: text
+        text: (machine|player1_score)
+        number_grouping: true
+        min_digits: 2
+        font_size: 50
+        y: 40%
+
 slide_player:
   mode_attract_started: attract_slide
+  attract_show_title: attract_title_slide
+  attract_show_press_start: attract_press_start_slide
+  attract_show_rules: attract_rules_slide
+  attract_show_last_score: attract_last_score_slide
+  game_ended:
+    widgets:
+      - type: text
+        text: "GAME OVER"
+        font_size: 80
+        color: red
 
 show_player:
-  mode_attract_started: attract_lights
+  mode_attract_started:
+    attract_lights:
+      loops: -1
+    attract_display_loop:
+      loops: -1
 
 sound_player:
   mode_attract_started:
@@ -43,4 +101,3 @@ sound_player:
   mode_attract_stopped:
     music_attract:
       action: stop
-

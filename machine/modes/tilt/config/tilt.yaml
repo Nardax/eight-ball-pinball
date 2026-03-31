@@ -1,0 +1,7 @@
+#config_version=6
+
+tilt:
+  tilt_switch_tag: tilt
+  slam_tilt_switch_tag: slam_tilt
+  warnings_to_tilt: 2
+  settle_time: 5s
