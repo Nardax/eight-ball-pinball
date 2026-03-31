@@ -41,6 +41,8 @@ modes:
   - rack_complete
   - kickback
   - bonus_mult
+  - lane_change
+  - tilt
 
 # Ball devices
 ball_devices:

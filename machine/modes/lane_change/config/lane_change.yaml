@@ -1,0 +1,40 @@
+#config_version=6
+
+# Lane Change Mode — classic top lane rotation with shot tracking
+# Provides visual feedback (shot state with lights) and flipper-controlled
+# lane rotation. Does NOT duplicate ball collection or multiplier logic
+# (those remain in base and bonus_mult modes).
+
+mode:
+  start_events: ball_started
+  stop_events: ball_ended
+  priority: 110
+
+shots:
+  sh_lane_1:
+    switch: s_lane_1
+    show_tokens:
+      light: l_lane_1_arrow
+  sh_lane_2:
+    switch: s_lane_2
+    show_tokens:
+      light: l_lane_2_arrow
+  sh_lane_3:
+    switch: s_lane_3
+    show_tokens:
+      light: l_lane_3_arrow
+  sh_lane_4:
+    switch: s_lane_4
+    show_tokens:
+      light: l_lane_4_arrow
+
+shot_groups:
+  top_lanes:
+    shots: sh_lane_1, sh_lane_2, sh_lane_3, sh_lane_4
+    rotate_left_events: s_flipper_left_active
+    rotate_right_events: s_flipper_right_active
+    reset_events: top_lanes_default_lit_complete
+
+variable_player:
+  top_lanes_default_lit_complete:
+    score: 10000

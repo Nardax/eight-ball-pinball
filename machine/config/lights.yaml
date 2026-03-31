@@ -138,6 +138,27 @@ lights:
     number:
     tags: lane_advance
 
+  # --- Top lane arrow LEDs (lane change shot tracking) ---
+  l_lane_1_arrow:
+    label: Lane 1 Arrow (lane change)
+    number:
+    tags: lane_arrow
+
+  l_lane_2_arrow:
+    label: Lane 2 Arrow (lane change)
+    number:
+    tags: lane_arrow
+
+  l_lane_3_arrow:
+    label: Lane 3 Arrow (lane change)
+    number:
+    tags: lane_arrow
+
+  l_lane_4_arrow:
+    label: Lane 4 Arrow (lane change)
+    number:
+    tags: lane_arrow
+
   # --- Pop bumper LEDs ---
   l_pop_left:
     label: Left Pop Bumper LED
